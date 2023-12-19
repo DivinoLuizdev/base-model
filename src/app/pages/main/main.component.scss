@@ -1,9 +1,52 @@
-.container{
-
-    div{
-       margin: 15px;
  
-    }
+.container {
+    div {
+        margin: 5px;
+    }padding: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "num1 num1 num4 num5"
+        "num1 num1 num4 num5"
+        "num2 num3 num4 num5"
+        "num2 num3 num6 num6"
+        "num2 num3 num6 num6";
 }
 
- 
+.num1 {
+    grid-area: num1;
+    border: solid 1px red;
+    height: 180px;
+}
+
+.num2 {
+    grid-area: num2;
+    border: solid 1px red;
+    
+}
+
+.num3 {
+    grid-area: num3;
+    border: solid 1px red;
+   
+}
+
+.num4 {
+    grid-area: num4;
+    border: solid 1px red;
+     
+}
+
+.num5 {
+    grid-area: num5;
+    border: solid 1px red;
+}
+
+.num6 {
+    grid-area: num6;
+    border: solid 1px red;
+     
+}

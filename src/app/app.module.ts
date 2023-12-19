@@ -12,13 +12,19 @@ import { ButtonModule } from 'primeng/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PanelModule } from 'primeng/panel';
 import { CardModule } from 'primeng/card';
+import { ClientesComponent } from './pages/clientes/clientes.component';
+import { FormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
+import { HttpClientModule } from '@angular/common/http';
+import { TableModule } from 'primeng/table';
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
     SiderbarComponent,
     CardComponent,
-    NavBarComponent
+    NavBarComponent,
+    ClientesComponent
 
   ],
   imports: [
@@ -28,7 +34,13 @@ import { CardModule } from 'primeng/card';
     ButtonModule,
     BrowserAnimationsModule,
     PanelModule,
-    CardModule
+    CardModule,
+    FormsModule,
+    DropdownModule,
+    HttpClientModule,
+    TableModule,
+    
+    
   ],
   providers: [],
   bootstrap: [AppComponent]
