@@ -1,0 +1,39 @@
+<div class="card flex justify-content-center "  >
+    <p-sidebar [(visible)]="sidebarVisible">
+
+        <!-- -------------------------------------------------------- -->
+        <div style="width: 280px;">
+            <div>
+                <span>
+                    <h2>Menu</h2>
+                </span>
+
+                <hr>
+                <ul id="menu">
+                    <!-- <li><i class="pi   pi-home" style="font-size: 2rem; ">Home</i></li>
+                    <li><i class="pi   pi-users" style="font-size: 2rem; ">Cliente</i></li>
+                    <li><i class="pi   pi-user" style="font-size: 2rem; ">Usuarios</i></li>
+                    <li><i class="pi   pi-chart-bar" style="font-size: 2rem; ">Emprestimos</i></li>
+                    <li><i class="pi   pi-calendar" style="font-size: 2rem; ">Calendario</i></li> -->
+                    <li>Home</li>
+                    <li>Cliente</li>
+                    <li>Usuarios</li>
+                    <li>Emprestimos</li>
+                    <li>Calendario</li>
+                    <li>Dashboard</li>
+                </ul>
+            </div>
+
+        </div>
+        <!-- ----------------------------------- -->
+    </p-sidebar>
+    <p-button (click)="sidebarVisible = true" icon="pi pi-align-justify" severity="secondary"></p-button>
+    <ul style="display: flex;justify-content:center ; padding: 0; flex-direction: column; align-items: center;">
+        <li><i class="pi   pi-home" style="font-size: 2rem; "></i></li>
+        <li><i class="pi   pi-users" style="font-size: 2rem; "></i></li>
+        <li><i class="pi   pi-user" style="font-size: 2rem; "></i></li>
+        <li><i class="pi   pi-chart-bar" style="font-size: 2rem; "></i></li>
+        <li><i class="pi   pi-calendar" style="font-size: 2rem; "></i></li>
+        <li><i class="pi  pi-chart-pie" style="font-size: 2rem; "></i></li>
+    </ul>
+</div>

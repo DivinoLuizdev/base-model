@@ -1,0 +1,30 @@
+#menu {
+     
+     
+        li{
+            border: solid 1p rgb(230, 221, 221);
+            
+        }
+    
+  
+    :hover {
+        color:lightseagreen;
+    }
+}
+ul {
+    li {
+        list-style: none;
+        padding: 10px 0px 10px 0px;
+        margin: 5px;
+        color: black;
+
+        border-radius: 4px;
+        :hover {
+            color: rgb(243, 236, 236);
+        }
+        font-size: 1.25rem;
+        i {
+            padding: 5px;
+        }
+    }
+}
