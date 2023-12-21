@@ -6,8 +6,8 @@
 
 <div class="card m-5">
     <p-table [value]="clientes" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
-             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-             [rowsPerPageOptions]="[5, 10, 20]">
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[5, 10, 20]">
         <ng-template pTemplate="header">
             <tr>
                 <th>ID</th>
@@ -15,11 +15,13 @@
                 <th>Estado Civil</th>
                 <th>Nome do Cônjuge</th>
                 <th>Observação</th>
-                
+
                 <th>CPF</th>
                 <th>Identidade</th>
-                <th>Nome do Cônjuge</th>
-                <th>Observação</th>
+
+                <th>Excluir </th>
+                <th>Editar</th>
+
                 <!-- Adicione outras colunas conforme necessário -->
             </tr>
         </ng-template>
@@ -32,6 +34,7 @@
                 <td>{{ cliente.observacao }}</td>
                 <td>{{ cliente.documento.cpf }}</td>
                 <td>{{ cliente.documento.identidade}}</td>
+
                 <!-- <td>{{ cliente.endereco.cep}}</td> -->
                 <!-- Adicione outras células conforme necessário, como cliente.documento.identidade, cliente.endereco.rua, etc. -->
             </tr>
