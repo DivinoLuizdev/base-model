@@ -35,17 +35,18 @@ export class MainComponent implements OnInit {
                   label: 'Second Dataset',
                   data: [28, 48, 40, 19, 86, 27, 90],
                   fill: false,
-                  borderDash: [5, 5],
+                //   borderDash: [5, 5],
                   tension: 0.4,
-                  borderColor: documentStyle.getPropertyValue('--teal-500')
+                //   borderColor: documentStyle.getPropertyValue('--teal-500'),
+                  backgroundColor: 'rgb(33, 146, 193)'
               },
               {
                   label: 'Third Dataset',
                   data: [12, 51, 62, 33, 21, 62, 45],
                   fill: true,
-                  borderColor: documentStyle.getPropertyValue('--orange-500'),
+                //   borderColor: documentStyle.getPropertyValue('#D0D4DE'),
                   tension: 0.4,
-                  backgroundColor: 'rgba(255,167,38,0.2)'
+                  backgroundColor: '#D1D5DE80'
               }
           ]
       };
