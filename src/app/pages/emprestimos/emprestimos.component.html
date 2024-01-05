@@ -1,0 +1,56 @@
+<div class="full-height">
+    <div class="container mt-5">
+        <h1>Detalhes do Empréstimo</h1>
+
+        <!-- Filter and Search Bar -->
+        <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Pesquisar...">
+        </div>
+
+        <!-- Loan Table -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nome do Cliente</th>
+                    <th scope="col">Valor Emprestado</th>
+                    <th scope="col">Taxa de Juros</th>
+                    <th scope="col">Parcelas</th>
+                    <th scope="col">Data de Inicio</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sample Data, Replace with Dynamic Data -->
+                <tr>
+                    <th scope="row">1</th>
+                    <td>John Doe</td>
+                    <td>$5,000.00</td>
+                    <td>5%</td>
+                    <td>12</td>
+                    <td>2023-01-01</td>
+                    <td><span class="badge bg-success">Paga</span></td>
+                    <td>
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#loanDetailsModal">Detalhes</button>
+                    </td>
+                </tr>
+                <!-- More Rows... -->
+
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#">Anterior</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">Próxima</a></li>
+            </ul>
+        </nav>
+    </div>
+
+</div>

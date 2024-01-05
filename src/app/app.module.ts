@@ -17,6 +17,14 @@ import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { HttpClientModule } from '@angular/common/http';
 import { TableModule } from 'primeng/table';
+import { EmprestimosComponent } from './pages/emprestimos/emprestimos.component';
+import { ChartModule } from 'primeng/chart';
+
+
+
+
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,8 +32,8 @@ import { TableModule } from 'primeng/table';
     SiderbarComponent,
     CardComponent,
     NavBarComponent,
-    ClientesComponent
-
+    ClientesComponent,
+    EmprestimosComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,10 +47,12 @@ import { TableModule } from 'primeng/table';
     DropdownModule,
     HttpClientModule,
     TableModule,
-    
-    
+    ChartModule,
   ],
+  exports: [],
+
   providers: [],
+  
   bootstrap: [AppComponent]
 })
 export class AppModule { }
