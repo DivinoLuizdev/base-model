@@ -1,39 +1,33 @@
-<div class="card flex justify-content-center "  >
-    <p-sidebar [(visible)]="sidebarVisible">
 
-        <!-- -------------------------------------------------------- -->
-        <div style="width: 280px;">
-            <div>
-                <span>
-                    <h2>Menu</h2>
-                </span>
 
-                <hr>
-                <ul id="menu">
-                    <!-- <li><i class="pi   pi-home" style="font-size: 2rem; ">Home</i></li>
-                    <li><i class="pi   pi-users" style="font-size: 2rem; ">Cliente</i></li>
-                    <li><i class="pi   pi-user" style="font-size: 2rem; ">Usuarios</i></li>
-                    <li><i class="pi   pi-chart-bar" style="font-size: 2rem; ">Emprestimos</i></li>
-                    <li><i class="pi   pi-calendar" style="font-size: 2rem; ">Calendario</i></li> -->
-                    <li>Home</li>
-                    <li>Cliente</li>
-                    <li>Usuarios</li>
-                    <li>Emprestimos</li>
-                    <li>Calendario</li>
-                    <li>Dashboard</li>
-                </ul>
-            </div>
 
-        </div>
-        <!-- ----------------------------------- -->
+<div class="card d-flex flex-column align-items-center">
+    <!-- Botão para abrir o sidebar -->
+    <p-button (click)="sidebarVisible = true" severity="secondary">
+        <i class="pi pi-align-justify custom-width-icon"></i>
+    </p-button>
+
+    <!-- Sidebar -->
+    <p-sidebar [(visible)]="sidebarVisible" [style]="{ 'width.px': 280 }">
+            <h2>Menu</h2>
+            <hr>
+            <ul id="menu" class="list-unstyled">
+                <li><a routerLink="/">Home</a></li>
+                <li><a routerLink="/clientes">Clientes</a></li>
+                <li><a routerLink="/emprestimos">Empréstimos</a></li>
+                <li>Usuários</li>
+                <li>Calendario</li>
+                <li>Dashboard</li>
+            </ul>
     </p-sidebar>
-    <p-button (click)="sidebarVisible = true" icon="pi pi-align-justify" severity="secondary"></p-button>
-    <ul style="display: flex;justify-content:center ; padding: 0; flex-direction: column; align-items: center;">
-        <li><i class="pi   pi-home" style="font-size: 2rem; "></i></li>
-        <li><i class="pi   pi-users" style="font-size: 2rem; "></i></li>
-        <li><i class="pi   pi-user" style="font-size: 2rem; "></i></li>
-        <li><i class="pi   pi-chart-bar" style="font-size: 2rem; "></i></li>
-        <li><i class="pi   pi-calendar" style="font-size: 2rem; "></i></li>
-        <li><i class="pi  pi-chart-pie" style="font-size: 2rem; "></i></li>
+
+    <!-- Ícones do PrimeNG -->
+    <ul class="list-unstyled mt-3">
+        <li><i class="pi pi-home" style="font-size: 2rem;"></i></li>
+        <li><i class="pi pi-users" style="font-size: 2rem;"></i></li>
+        <li><i class="pi pi-user" style="font-size: 2rem;"></i></li>
+        <li><i class="pi pi-chart-bar" style="font-size: 2rem;"></i></li>
+        <li><i class="pi pi-calendar" style="font-size: 2rem;"></i></li>
+        <li><i class="pi pi-chart-pie" style="font-size: 2rem;"></i></li>
     </ul>
 </div>

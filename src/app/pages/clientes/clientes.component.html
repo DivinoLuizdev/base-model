@@ -8,7 +8,7 @@
 
         <div style="width: 100%; display: flex;justify-content: end;  ">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Cadastra Cliente
+                Cadastrar Cliente
             </button>
         </div>
 
@@ -31,7 +31,7 @@
                 <th>Identidade</th>
 
                 <th>Excluir </th>
-                <th>Editar</th>
+                <th>Editar/Visualizar</th>
 
                 <!-- Adicione outras colunas conforme necessário -->
             </tr>
@@ -45,7 +45,7 @@
                 <td>{{ cliente.observacao }}</td>
                 <td>{{ cliente.documento.cpf }}</td>
                 <td>{{ cliente.documento.identidade}}</td>
-                <td> <p-button label="Excluir" severity="danger"></p-button></td>
+                <td> <button label="Excluir" severity="danger"></button></td>
                 <td><p-button label="Editar" data-bs-toggle="modal" data-bs-target="#exampleModal"
                         severity="info"></p-button></td>
                 <!-- <td>{{ cliente.endereco.cep}}</td> -->
@@ -63,18 +63,74 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl"> <!-- Adiciona a classe modal-xl para tornar a modal extra grande -->
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Cadastro Completo</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ...
+                <div class="container mt-3">
+                    <h1>Registro de Cliente e Empréstimo</h1>
+                
+                    <!-- Formulário de Registro de Cliente -->
+                    <form id="clienteForm">
+                        <h2>Informações do Cliente</h2>
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome:</label>
+                            <input type="text" class="form-control" id="nome" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="estadocivil" class="form-label">Estado Civil:</label>
+                            <input type="text" class="form-control" id="estadocivil" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nomedoconjunge" class="form-label">Nome do Conjunge:</label>
+                            <input type="text" class="form-control" id="nomedoconjunge" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cpf" class="form-label">CPF:</label>
+                            <input type="text" class="form-control" id="cpf" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="identidade" class="form-label">Identidade:</label>
+                            <input type="text" class="form-control" id="identidade" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="endereco" class="form-label">Endereço:</label>
+                            <input type="text" class="form-control" id="endereco" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contato" class="form-label">Contato:</label>
+                            <input type="text" class="form-control" id="contato" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="observacoes" class="form-label">Observações:</label>
+                            <input type="text" class="form-control" id="observacoes" required>
+                        </div>
+                
+                        <!-- Formulário de Registro de Empréstimo -->
+                        <h2>Informações de Empréstimo</h2>
+                        <div class="mb-3">
+                            <label for="valor" class="form-label">Valor do Empréstimo:</label>
+                            <input type="number" class="form-control" id="valor" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="juros" class="form-label">Juros (%):</label>
+                            <input type="number" class="form-control" id="juros" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="parcelamento" class="form-label">Opções de Parcelamento:</label>
+                            <input type="text" class="form-control" id="parcelamento" required>
+                        </div>
+                
+                        <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
+                    </form>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary">Salvar Cadastro</button>
             </div>
         </div>
     </div>
