@@ -2,8 +2,9 @@
     <div style="  height: 20%; display: flex; align-items: center; padding: 10px;  ">
         <form class="d-flex">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit"> <i class="pi pi-search" style="font-size: 1rem"></i></button>
-            
+            <button class="btn btn-outline-success" type="submit"> <i class="pi pi-search"
+                    style="font-size: 1rem"></i></button>
+
         </form>
 
         <div style="width: 100%; display: flex;justify-content: end;  ">
@@ -23,14 +24,11 @@
             <tr>
                 <th>ID</th>
                 <th>Nome</th>
-                <th>Estado Civil</th>
-                <th>Nome do Cônjuge</th>
-                <th>Observação</th>
-
                 <th>CPF</th>
-                <th>Identidade</th>
-
-                <th>Excluir </th>
+                <th>Endereço</th>
+                <th>Contato</th>
+                <th>Local de Trabalho</th>
+                <th>Excluir</th>
                 <th>Editar/Visualizar</th>
 
                 <!-- Adicione outras colunas conforme necessário -->
@@ -72,7 +70,7 @@
             <div class="modal-body">
                 <div class="container mt-3">
                     <h1>Registro de Cliente e Empréstimo</h1>
-                
+
                     <!-- Formulário de Registro de Cliente -->
                     <form id="clienteForm">
                         <h2>Informações do Cliente</h2>
@@ -101,6 +99,10 @@
                             <input type="text" class="form-control" id="endereco" required>
                         </div>
                         <div class="mb-3">
+                            <label for="localdetrabalho" class="form-label">Local de Trabalho:</label>
+                            <input type="text" class="form-control" id="localdetrabalho" required>
+                        </div>
+                        <div class="mb-3">
                             <label for="contato" class="form-label">Contato:</label>
                             <input type="text" class="form-control" id="contato" required>
                         </div>
@@ -108,23 +110,63 @@
                             <label for="observacoes" class="form-label">Observações:</label>
                             <input type="text" class="form-control" id="observacoes" required>
                         </div>
-                
+
                         <!-- Formulário de Registro de Empréstimo -->
                         <h2>Informações de Empréstimo</h2>
                         <div class="mb-3">
                             <label for="valor" class="form-label">Valor do Empréstimo:</label>
                             <input type="number" class="form-control" id="valor" required>
                         </div>
+
+                        <!-- Campo para a taxa de juros -->
                         <div class="mb-3">
-                            <label for="juros" class="form-label">Juros (%):</label>
-                            <input type="number" class="form-control" id="juros" required>
+                            <label for="juros">Taxa de Juros (% ao mes):</label>
+                            <input type="number" class="form-control" [(ngModel)]="taxaJuros" required>
                         </div>
+
+                        <!-- Seleção da quantidade de parcelas -->
                         <div class="mb-3">
-                            <label for="parcelamento" class="form-label">Opções de Parcelamento:</label>
-                            <input type="text" class="form-control" id="parcelamento" required>
+                            <label for="parcelas" class="form-label">Quantidade de Parcelas:</label>
+                            <select class="form-control" id="parcelas">
+                                <option value="5">1x</option>
+                                <option value="8">2x</option>
+                                <option value="8">4x</option>
+                                <option value="8">5x</option>
+                                <option value="8">10x</option>
+                                <!-- Adicione mais opções conforme necessário -->
+                            </select>
                         </div>
-                
-                        <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
+
+                        <!-- Formulário para exibir e permitir a edição das parcelas -->
+                        <div *ngIf="parcelas.length > 0">
+                            <form>
+                                <div *ngFor="let parcela of parcelas; let i = index" class="mb-3">
+                                    <label for="parcela-{{i}}">Parcela {{i + 1}}:</label>
+                                    <input type="number" class="form-control" [(ngModel)]="parcelas[i]"
+                                        id="parcela-{{i}}">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                            </form>
+                        </div>
+
+
+                        <!-- Botão para calcular as parcelas iniciais -->
+                        <button type="button" class="btn btn-primary" (click)="calcularParcelasIniciais()">Calcular
+                            Parcelas</button>
+
+                        <!-- Formulário para exibir e permitir a edição das parcelas -->
+                        <div *ngIf="parcelas.length > 0">
+                            <form>
+                                <div *ngFor="let parcela of parcelas; let i = index" class="mb-3">
+                                    <label for="parcela-{{i}}">Parcela {{i + 1}}:</label>
+                                    <input type="number" class="form-control" [(ngModel)]="parcelas[i]"
+                                        id="parcela-{{i}}">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                            </form>
+                        </div>
+
+                        <button type="button" class="btn btn-primary ms-3" onclick="registrar()">Registrar</button>
                     </form>
                 </div>
             </div>

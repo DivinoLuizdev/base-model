@@ -9,9 +9,18 @@ import { ClienteService } from 'src/app/service/cliente.service';
 })
 export class ClientesComponent implements OnInit {
   clientes: Cliente[] = []; // Agora é uma lista de clientes
+  valorEmprestimo: number;
+  numeroParcelas: number;
+  taxaJuros: number; // Nova propriedade para a taxa de juros
+  parcelas: number[];
 
-  constructor(private clienteService: ClienteService) {}
-
+  constructor(private clienteService: ClienteService) {
+    this.valorEmprestimo = 2000; // Valor inicial
+    this.numeroParcelas = 5;    // Quantidade inicial de parcelas
+    this.taxaJuros = 0;         // Taxa de juros inicial
+    this.parcelas = [];
+  }
+  
   ngOnInit(): void {
     this.obterDadosClientes();
   }
@@ -28,4 +37,22 @@ export class ClientesComponent implements OnInit {
       }
     );
   }
+
+  calcularParcelasIniciais(): void {
+    if (!this.valorEmprestimo || !this.numeroParcelas || this.taxaJuros == null) {
+      return;
+    }
+
+    this.parcelas = [];
+    const jurosMensal = this.taxaJuros / 100 / this.numeroParcelas;
+    for (let i = 0; i < this.numeroParcelas; i++) {
+      // Lógica de cálculo com juros
+      const valorParcela = (this.valorEmprestimo / this.numeroParcelas) * (1 + jurosMensal);
+      this.parcelas.push(valorParcela);
+    }
+  }
+
 }
+
+
+

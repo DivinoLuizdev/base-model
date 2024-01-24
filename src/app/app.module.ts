@@ -19,6 +19,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { TableModule } from 'primeng/table';
 import { EmprestimosComponent } from './pages/emprestimos/emprestimos.component';
 import { ChartModule } from 'primeng/chart';
+import { RelatorioComponent } from './pages/relatorio/relatorio.component';
+import { CalendarioComponent } from './pages/calendario/calendario.component';
+import { UsuarioComponent } from './pages/usuario/usuario.component';
+import { RelatorioChart1Component } from './pages/relatorio.chart1/relatorio.chart1.component';
+import { RelatorioChart2Component } from './pages/relatorio.chart2/relatorio.chart2.component';
+
 
 
 
@@ -34,6 +40,11 @@ import { ChartModule } from 'primeng/chart';
     NavBarComponent,
     ClientesComponent,
     EmprestimosComponent,
+    RelatorioComponent,
+    CalendarioComponent,
+    UsuarioComponent,
+    RelatorioChart1Component,
+    RelatorioChart2Component,
   ],
   imports: [
     BrowserModule,
@@ -49,7 +60,10 @@ import { ChartModule } from 'primeng/chart';
     TableModule,
     ChartModule,
   ],
-  exports: [],
+  exports: [
+  RelatorioChart1Component,
+  RelatorioChart2Component,
+  ],
 
   providers: [],
   
