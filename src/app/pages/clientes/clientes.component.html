@@ -2,12 +2,13 @@
     <div style="  height: 20%; display: flex; align-items: center; padding: 10px;  ">
         <form class="d-flex">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit"> <i class="pi pi-search" style="font-size: 1rem"></i></button>
-            
+            <button class="btn btn-outline-success" type="submit"> <i class="pi pi-search"
+                    style="font-size: 1rem"></i></button>
+
         </form>
 
         <div style="width: 100%; display: flex;justify-content: end;  ">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal">
                 Cadastrar Cliente
             </button>
         </div>
@@ -17,7 +18,6 @@
 
 <div class="card m-2">
     <p-table [value]="clientes" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         [rowsPerPageOptions]="[2, 4, 6]">
         <ng-template pTemplate="header">
             <tr>
@@ -26,14 +26,10 @@
                 <th>Estado Civil</th>
                 <th>Nome do Cônjuge</th>
                 <th>Observação</th>
-
                 <th>CPF</th>
                 <th>Identidade</th>
-
-                <th>Excluir </th>
                 <th>Editar/Visualizar</th>
-
-                <!-- Adicione outras colunas conforme necessário -->
+                
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-cliente>
@@ -45,11 +41,19 @@
                 <td>{{ cliente.observacao }}</td>
                 <td>{{ cliente.documento.cpf }}</td>
                 <td>{{ cliente.documento.identidade}}</td>
-                <td> <button label="Excluir" severity="danger"></button></td>
-                <td><p-button label="Editar" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                        severity="info"></p-button></td>
-                <!-- <td>{{ cliente.endereco.cep}}</td> -->
-                <!-- Adicione outras células conforme necessário, como cliente.documento.identidade, cliente.endereco.rua, etc. -->
+
+
+                
+                <td >
+                    <button  (click)="deletarCliente(cliente.id)" style="margin: 2px;" type="button" class="btn btn-danger"     
+                     >Excluir</button>
+                
+               
+                    <button style="margin: 2px;" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal"
+                    severity="info">Editar</button>
+                </td>
+                
+                 
             </tr>
         </ng-template>
     </p-table>
@@ -60,78 +64,99 @@
 
 
 
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl"> <!-- Adiciona a classe modal-xl para tornar a modal extra grande -->
+ 
+<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="clienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">  
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Cadastro Completo</h1>
+                <h1 class="modal-title fs-5" id="clienteModalLabel">Cadastro</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="container mt-3">
-                    <h1>Registro de Cliente e Empréstimo</h1>
+              <app-cadastro-clientes   (atualizarClientes)="getClientes()"></app-cadastro-clientes>
                 
-                    <!-- Formulário de Registro de Cliente -->
-                    <form id="clienteForm">
-                        <h2>Informações do Cliente</h2>
-                        <div class="mb-3">
-                            <label for="nome" class="form-label">Nome:</label>
-                            <input type="text" class="form-control" id="nome" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="estadocivil" class="form-label">Estado Civil:</label>
-                            <input type="text" class="form-control" id="estadocivil" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="nomedoconjunge" class="form-label">Nome do Conjunge:</label>
-                            <input type="text" class="form-control" id="nomedoconjunge" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="cpf" class="form-label">CPF:</label>
-                            <input type="text" class="form-control" id="cpf" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="identidade" class="form-label">Identidade:</label>
-                            <input type="text" class="form-control" id="identidade" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="endereco" class="form-label">Endereço:</label>
-                            <input type="text" class="form-control" id="endereco" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="contato" class="form-label">Contato:</label>
-                            <input type="text" class="form-control" id="contato" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="observacoes" class="form-label">Observações:</label>
-                            <input type="text" class="form-control" id="observacoes" required>
-                        </div>
-                
-                        <!-- Formulário de Registro de Empréstimo -->
-                        <h2>Informações de Empréstimo</h2>
-                        <div class="mb-3">
-                            <label for="valor" class="form-label">Valor do Empréstimo:</label>
-                            <input type="number" class="form-control" id="valor" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="juros" class="form-label">Juros (%):</label>
-                            <input type="number" class="form-control" id="juros" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="parcelamento" class="form-label">Opções de Parcelamento:</label>
-                            <input type="text" class="form-control" id="parcelamento" required>
-                        </div>
-                
-                        <button type="button" class="btn btn-primary" onclick="registrar()">Registrar</button>
-                    </form>
-                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary">Salvar Cadastro</button>
-            </div>
+             
         </div>
     </div>
+</div> 
+<!-- 
+<div class="card border" style="margin: 10px;">
+  <div class="card " style="display: flex;justify-content: space-between; flex-direction: row;">
+    <h2>Lista de Clientes</h2>
+    <div class="button-container">
+      <button type="button" class=" btn " data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <i class="pi pi-plus"></i> Novo
+      </button>
+    </div>
+  </div>
+
+  <div class="card ">
+    <input type="text" placeholder="Pesquisar" class="form-control mb-2">
+
+    <p-table [value]="clientes" [paginator]="true" [rows]="4" [rowsPerPageOptions]="[4, 8, 12]">
+      <ng-template pTemplate="header">
+     
+
+        <tr>
+          <th>Excluir Editar</th>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Estado Civil</th>
+          <th>CPF</th>
+          <th>Identidade</th>
+          <th>Nome do Cônjuge</th>
+          <th>Observação</th>
+        </tr>
+
+
+      </ng-template>
+      <ng-template pTemplate="body" let-cliente>
+        <tr>
+          <td>
+            <button class="btn" (click)="deletarCliente(cliente.id)" style="margin: 5px;">
+              <i class="pi pi-trash"></i>
+            </button>
+
+            <button class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal"   style="margin: 5px;">
+              <i class="pi pi-pencil"></i>
+            </button>
+          </td>   
+          
+            <td>{{ cliente.id }}</td>
+            <td>{{ cliente.nome }}</td>
+            <td>{{ cliente.estadoCivil }}</td>
+            <td>{{ cliente.documento.cpf }}</td>
+            <td>{{ cliente.documento.identidade}}</td>
+            <td>{{ cliente.nomeConjuge }}</td>
+            <td>{{ cliente.observacao }}</td>
+            
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div> -->
+
+
+
+
+
+ 
+
+
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content   container">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Cadastro</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <app-cadastro-clientes   (atualizarClientes)="getClientes()">  '</app-cadastro-clientes>
+      </div>
+    </div>
+  </div>
 </div>

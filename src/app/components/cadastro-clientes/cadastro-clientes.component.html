@@ -1,0 +1,180 @@
+<form [formGroup]="formulario" (ngSubmit)="onSubmit()" class="container mt-4">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" formControlName="nome" class="form-control">
+        <div *ngIf="formulario.get('nome')?.invalid && (formulario.get('nome')?.dirty || formulario.get('nome')?.touched)" class="text-danger">
+          <div *ngIf="formulario.get('nome')?.errors?.['required']">Campo obrigatório.</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="estadoCivil">Estado Civil:</label>
+        <select id="estadoCivil" formControlName="estadoCivil" class="form-control" (change)="onChangeEstadoCivil($event)">
+          <option *ngFor="let estadoCivil of estadosCivis" [value]="estadoCivil">{{ estadoCivil }}</option>
+        </select>
+        <div *ngIf="formulario.get('estadoCivil')?.invalid && (formulario.get('estadoCivil')?.dirty || formulario.get('estadoCivil')?.touched)" class="text-danger">
+          <div *ngIf="formulario.get('estadoCivil')?.errors?.['pattern']">Campo obrigatório.</div>
+        </div>
+      </div>  
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="observacao">Observação:</label>
+        <textarea id="observacao" formControlName="observacao" class="form-control" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="col-md-6" *ngIf="mostrarCamposConjuge">
+      <div class="form-group">
+        <label for="nomeConjuge">Nome do Cônjuge:</label>
+        <input type="text" id="nomeConjuge" formControlName="nomeConjuge" class="form-control">
+      </div>
+    </div>
+  </div>
+  <fieldset formGroupName="contato">
+    <legend>Contato</legend>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="telefone">Telefone:</label>
+          <input type="text" id="telefone" [formControl]="telefoneControl" class="form-control" mask="(00)000000000">
+          <div *ngIf="telefoneValido" style="color: red;">Formato de inválido. Use ddd+000000000.</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" formControlName="email" class="form-control">
+        </div>
+      </div>
+      <div class="col-md-4" *ngIf="mostrarCamposConjuge">
+        <div class="form-group">
+          <label for="telefoneConjuge">Telefone do Cônjuge:</label>
+          <input type="text" id="telefoneConjuge" [formControl]="telefoneControl" class="form-control ">
+          <div *ngIf="telefoneValido" style="color: red;">Formato de inválido. Use xxxxxxxxxxx.</div>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <fieldset formGroupName="documento">
+    <legend>Documento</legend>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="identidade">Identidade:</label>
+          <input type="text" id="identidade" formControlName="identidade" class="form-control">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="cpf">CPF:</label>
+          <input type="text" id="cpf" formControlName="cpf" class="form-control">
+          <div *ngIf="formulario.get('documento.cpf')?.invalid && (formulario.get('documento.cpf')?.dirty || formulario.get('documento.cpf')?.touched)" class="text-danger">
+            <div *ngIf="formulario.get('documento.cpf')?.errors?.['pattern']">Formato de CPF inválido. Use XXX.XXX.XXX-XX</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <fieldset formGroupName="endereco">
+    <legend>Endereço</legend>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="rua">Rua:</label>
+          <input type="text" id="rua" formControlName="rua" class="form-control">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="cidade">Cidade:</label>
+          <input type="text" id="cidade" formControlName="cidade" class="form-control">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="cep">CEP:</label>
+          <input type="text" id="cep" [formControl]="cepFormControl" class="form-control">
+          <div *ngIf="cepInvalido" style="color: red;">Formato de CEP inválido. Use XXXXXXXX.</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="estado">Estado:</label>
+          <select id="estado" formControlName="estado" class="form-control">
+            <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="numero">Número:</label>
+          <input type="text" id="numero" formControlName="numero" class="form-control">
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="complemento">Complemento:</label>
+      <input type="text" id="complemento" formControlName="complemento" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="bairro">Bairro:</label>
+      <input type="text" id="bairro" formControlName="bairro" class="form-control">
+    </div>
+  </fieldset>
+  <fieldset formGroupName="localTrabalho">
+    <legend>Local de Trabalho</legend>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="ruaTrabalho">Rua:</label>
+          <input type="text" id="ruaTrabalho" formControlName="rua" class="form-control">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="cidadeTrabalho">Cidade:</label>
+          <input type="text" id="cidadeTrabalho" formControlName="cidade" class="form-control">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="cepTrabalho">CEP:</label>
+          <input type="text" id="cepTrabalho" [formControl]="cepFormControl" class="form-control">
+          <div *ngIf="cepInvalido" style="color: red;">Formato de CEP inválido. Use XXXXXXXX.</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="estadoTrabalho">Estado:</label>
+          <select id="estadoTrabalho" formControlName="estado" class="form-control">
+            <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="numeroTrabalho">Número:</label>
+          <input type="text" id="numeroTrabalho" formControlName="numero" class="form-control">
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="complementoTrabalho">Complemento:</label>
+      <input type="text" id="complementoTrabalho" formControlName="complemento" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="bairroTrabalho">Bairro:</label>
+      <input type="text" id="bairroTrabalho" formControlName="bairro" class="form-control">
+    </div>
+  </fieldset>
+  <button type="submit" [disabled]="!formulario.valid" class="btn btn-primary">Enviar</button>
+</form>
