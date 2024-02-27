@@ -20,7 +20,7 @@ ul {
 
         border-radius: 4px;
         :hover {
-            color: rgb(243, 236, 236);
+            color: rgb(0, 0, 0);
         }
         font-size: 1.25rem;
         i {
@@ -34,3 +34,26 @@ ul {
     font-size: 1.5rem; /* ou qualquer outro tamanho desejado */
 
   }
+
+#menu li:hover {
+    cursor: pointer; /* Altera o cursor do mouse para pointer quando hover */
+    transition: transform 0.3s ease; /* Adiciona uma transição suave */
+}
+
+#menu li:hover {
+    transform: translateX(5px); /* Move o item da lista para a direita quando hover */
+}
+
+
+/* CSS para animação do cursor */
+
+#menu li:hover,
+.list-unstyled li:hover {
+    cursor: pointer; /* Altera o cursor do mouse para pointer quando hover */
+    transition: transform 0.3s ease; /* Adiciona uma transição suave */
+}
+
+#menu li:hover,
+.list-unstyled li:hover {
+    transform: translateX(5px); /* Move o item da lista para a direita quando hover */
+}
