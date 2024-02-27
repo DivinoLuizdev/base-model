@@ -2,20 +2,21 @@ import { Endereco } from './endereco';
 import { Documento } from './documento';
 import { Contato  } from './contato';
 import {EstadoCivil} from './estado-civil'
+import { Emprestimo } from './emprestimo';
 
 export class Cliente {
+  id: number;
+  nome: string;
+  estadoCivil: EstadoCivil;
+  nomeConjuge: string;
+  observacao: string;
+  documento: Documento = new Documento;
+  endereco: Endereco = new Endereco();
+  contato: Contato = new Contato();
+  localTrabalho: Endereco = new Endereco();
+  emprestimos: Emprestimo[] = [];
 
-  
-
-    constructor(
-        public id?: number,
-        public nome?: string,
-        public estadoCivil : EstadoCivil = EstadoCivil.SOLTEIRO ,
-        public nomeConjuge: string = '',
-        public observacao: string = '',
-        public documento: Documento = new Documento(),
-        public endereco: Endereco = new Endereco(),
-        public contato: Contato = new Contato(),
-        public localTrabalho: Endereco  = new Endereco()
-      ) {}
+  //teste
+  valor: number
+  constructor() {}
 }

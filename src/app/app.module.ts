@@ -21,9 +21,8 @@ import { EmprestimosComponent } from './pages/emprestimos/emprestimos.component'
 import { ChartModule } from 'primeng/chart';
 import { CadastroClientesComponent } from './components/cadastro-clientes/cadastro-clientes.component';
 import { InputMaskModule } from 'primeng/inputmask';
-
-
-
+import { DialogModule } from 'primeng/dialog';
+import { CurrencyMaskModule } from "ng2-currency-mask";
 
 
 @NgModule({
@@ -52,8 +51,9 @@ import { InputMaskModule } from 'primeng/inputmask';
     HttpClientModule,
     TableModule,
     ChartModule,
-    InputMaskModule
-   
+    InputMaskModule,
+    DialogModule,
+    CurrencyMaskModule
   ],
   exports: [],
 

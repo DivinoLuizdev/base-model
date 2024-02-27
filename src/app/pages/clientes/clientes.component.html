@@ -8,7 +8,7 @@
         </form>
 
         <div style="width: 100%; display: flex;justify-content: end;  ">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal">
+            <button type="button" class="btn btn-primary" (click)="showDialogCadastro()">
                 Cadastrar Cliente
             </button>
         </div>
@@ -57,28 +57,6 @@
             </tr>
         </ng-template>
     </p-table>
-</div>
-
-
-
-
-
-
- 
-<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="clienteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">  
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="clienteModalLabel">Cadastro</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <app-cadastro-clientes   (atualizarClientes)="getClientes()"></app-cadastro-clientes>
-                
-            </div>
-             
-        </div>
-    </div>
 </div> 
 <!-- 
 <div class="card border" style="margin: 10px;">
@@ -143,20 +121,7 @@
 
  
 
-
-
-
-
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content   container">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Cadastro</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-      </div>
-      <div class="modal-body">
-        <app-cadastro-clientes   (atualizarClientes)="getClientes()">  '</app-cadastro-clientes>
-      </div>
-    </div>
-  </div>
-</div>
+<p-dialog header="Cadastro" [(visible)]="displayCadastro" [style]="{width: '50vw'}"  (onHide)="indexPage = 0">
+  <app-cadastro-clientes   (atualizarClientes)="getClientes()" 
+    [cliente]="clienteSelecionado" [indexPage]="indexPage"> </app-cadastro-clientes>
+</p-dialog>

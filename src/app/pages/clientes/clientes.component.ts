@@ -9,12 +9,15 @@ import { ClienteService } from 'src/app/service/cliente.service';
 })
 export class ClientesComponent implements OnInit {
   clientes: Cliente[] = [];
+  clienteSelecionado = new Cliente();
+  displayCadastro = false;
+  indexPage = 0;
  
   // clienteSelecionado: Cliente = new Cliente();
   constructor(private clienteService: ClienteService) { }
 
   ngOnInit(): void {
-  console.log( this.getClientes())
+    console.log( this.getClientes())
   }
 
   async getClientes(): Promise<void> {
@@ -64,5 +67,11 @@ export class ClientesComponent implements OnInit {
     } catch (error) {
       console.error(`Erro ao excluir cliente ${id}: ${error}`);
     }
+   }
+
+   showDialogCadastro() {
+    this.clienteSelecionado = new Cliente();
+    this.indexPage = 0;
+    this.displayCadastro = true;
    }
 }
