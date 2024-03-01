@@ -7,6 +7,7 @@ import { ClienteService } from 'src/app/service/cliente.service';
 import { EstadoCivil } from '../../model/estado-civil';
 import { Emprestimo } from 'src/app/model/emprestimo';
 import { AbstractForm } from 'src/app/model/abastract-form';
+import { Parcela } from 'src/app/model/parcela';
 
 
 @Component({
@@ -19,9 +20,9 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   estadosCivis = Object.values(EstadoCivil);
   estados = Object.values(Estados);
   displayEmprestimo = false;
+  listaParcelas: number[] = [];
 
   @Input() cliente: Cliente;
-  @Input() indexPage = 0;
   emprestimo: Emprestimo = new Emprestimo();
   emprestimos: Emprestimo[] = [];
   constructor(private formBuilder: FormBuilder, private clienteService: ClienteService) {
@@ -32,6 +33,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   mostrarCamposConjuge: boolean = false;
 
   ngOnInit() {
+    this.listaParcelas = [1,2,4,5,10];
   }
 
   telefoneValido(input: any, form: any) {
@@ -153,14 +155,6 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     }
   }
 
-  proximo() {
-    this.indexPage++;
-  }
-
-  voltar() {
-    this.indexPage--;
-  }
-
   salvar() {
     console.log(this.emprestimo);
     console.log(this.cliente);
@@ -170,13 +164,37 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     if (changes['cliente']) {
       this.cliente = new Cliente();
       this.emprestimo = new Emprestimo();
-      this.indexPage = 0;
+      this.displayEmprestimo = false;
     }
   }
 
   novoEmprestimo() {
     this.emprestimo = new Emprestimo();
     this.displayEmprestimo = true;
+  }
+
+  calcularParcelasEmprestimo() {
+    let valorTotal = 0;
+    let saldoDevedor = this.emprestimo.valor;
+    let valorParcela = this.emprestimo.valor/this.emprestimo.numeroParcela;
+    let vencimentoAtual = this.convertToDate(this.emprestimo.dataInicial);
+
+    this.emprestimo.parcelas = [];
+    for(let i = 1; i <= this.emprestimo.numeroParcela; i++) {
+      let parcela = new Parcela();
+      parcela.dataVencimento = this.deepcopy(vencimentoAtual);
+      parcela.valorParcela = valorParcela;
+      parcela.valorJuros = (saldoDevedor * 0.1);
+      parcela.numParcela = i;
+
+      vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1);
+      saldoDevedor = this.emprestimo.valor - (valorParcela * i)
+      valorTotal += parcela.valorParcela + parcela.valorJuros;
+
+      this.emprestimo.parcelas.push(parcela)
+    }
+    this.emprestimo.valorTotal = valorTotal;
+    console.log(this.emprestimo);
   }
 
 }

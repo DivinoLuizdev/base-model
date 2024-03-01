@@ -1,5 +1,4 @@
 <form class="container mt-4" #form="ngForm" novalidate autocomplete="off">
-  <div id="clientes" *ngIf="indexPage === 0">
     <div class="row">
       <div class="col-md-6">
         <div class="form-group">
@@ -217,14 +216,6 @@
           #bairroLocalTrabalho="ngModel" ngModel [(ngModel)]="cliente.localTrabalho.bairro">
       </div>
     </fieldset>
-    <div class="row">
-      <div class="col-md-12" style="text-align: right;">
-        <button type="button" class="btn btn-primary" (click)="proximo()" >Próximo</button>
-        <!-- [disabled]="!form.valid" -->
-      </div>
-    </div>
-  </div>
-  <div id="emprestimos" *ngIf="indexPage === 1">
     <fieldset name="emprestimo">
       <legend>Empréstimos</legend>
       <div class="row" style="padding-top: 10px;">
@@ -261,28 +252,107 @@
           </ng-template>
         </p-table>
       </div>
-      <!-- <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="valor">Valor:</label>
-            <input currencyMask name="valor" maxLength="13" #valor="ngModel" ngModel 
-            [(ngModel)]="emprestimo.valor" title="Valor Emprestado"
-            [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
-          </div>
-        </div>
-      </div> -->
     </fieldset>
 
     <div class="row">
-      <div class="col-md-6" style="text-align: left;">
-        <button type="button" class="btn btn-default" (click)="voltar()">Voltar</button>
-      </div>
-      <div class="col-md-6" style="text-align: right;">
-        <button type="button" (click)="salvar()" class="btn btn-primary">Salvar</button>
+      <div class="col-md-12" style="text-align: right;">
+        <button type="button" class="btn btn-primary" (click)="salvar()" >Salvar</button>
+        <!-- [disabled]="!form.valid" -->
       </div>
     </div>
+  <p-dialog header="Novo Empréstimo" [(visible)]="displayEmprestimo" [style]="{width: '60vw'}"
+  [modal]="true" [draggable]="false" [resizable]="false">
+    <div class="row">
+    <fieldset name="novoEmprestimo">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="valor">Valor:</label>
+            <input currencyMask name="valor" maxLength="13" #valor="ngModel" ngModel 
+            style="height: calc(2.25rem + 14px);"
+            [(ngModel)]="emprestimo.valor" title="Valor Emprestado" class="form-control"
+            [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="qtdeParcelas">Quantidade Parcelas:</label>
+            <select id="qtdeParcelas" name="qtdeParcelas" class="form-control"
+              style="height: calc(2.25rem + 14px);"
+              #qtdeParcelas="ngModel" ngModel [(ngModel)]="emprestimo.numeroParcela">
+              <option *ngFor="let p of listaParcelas" [value]="p">{{p}}x</option>
+            </select>
+            <div *ngIf="showError(qtdeParcelas, form)" class="text-danger">
+              <div>O Campo Quantidade Parcelas é obrigatório.</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="dataVencimento">Vencimento 1ª Parcela:</label>
+            <p-inputMask mask="99/99/9999" [(ngModel)]="emprestimo.dataInicial" placeholder="dd/mm/yyyy"
+            [style]="{width: '100%'}"  [ngModelOptions]="{standalone: true}"></p-inputMask>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="calcular">&nbsp;</label>
+            <button name="calcular" type="button" class="btn btn-primary form-control"
+            style="height: calc(2.25rem + 14px);"
+            severity="info" (click)="calcularParcelasEmprestimo()"><i class="pi pi-calculator"></i> Calcular</button>
+          </div>
+          
+        </div>
+      </div>
+      <div class="row" style="padding-top: 20px;" *ngIf="emprestimo.parcelas.length > 0">
+        <p-table [value]="emprestimo.parcelas" [paginator]="false">
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 2em;">Nº</th>
+              <th>Valor Parcela</th>
+              <th>Valor Juros</th>
+              <th>Total</th>
+              <th>Vencimento</th>
+              <th>Editar</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-p>
+            <tr>
+              <td>{{ p.numParcela }}</td>
+              <td>{{ p.valorParcela | currency: 'BRL' }}</td>
+              <td>{{ p.valorJuros | currency: 'BRL' }}</td>
+              <td>{{ p.valorParcela + p.valorJuros | currency: 'BRL' }}</td>
+              <td>{{ p.dataVencimento | date: 'dd/MM/yyyy'}}</td>
+              <td>
+                <button name="editarParcela" type="button" class="btn btn-primary"
+                    severity="info"><i class="pi pi-pencil"></i></button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <tr>
+              <td colspan="3" class="text-right"><strong>Total: </strong> </td>
+              <td>{{ emprestimo.valorTotal | currency: 'BRL'}}</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+          </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </fieldset>
   </div>
-  <p-dialog header="Novo Empréstimo" [(visible)]="displayEmprestimo" [style]="{width: '50vw'}">
-    Cadastrar empréstimo
+  <ng-template pTemplate="footer">
+    <div class="row">
+      <div class="col-md-6" style="text-align: left;">
+      <button name="cancelarParcelas" type="button" class="btn btn-secondary">
+        <i class="pi pi-cancel"></i> Cancelar</button>
+      </div>
+      <div class="col-md-6" style="text-align: right;">
+  
+      <button name="adicionarParcelas" type="button" class="btn btn-primary"
+                  severity="info"><i class="pi pi-confirm"></i> Adicionar</button>
+      </div>
+    </div>
+  </ng-template>
   </p-dialog>
 </form>

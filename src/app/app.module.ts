@@ -23,6 +23,7 @@ import { CadastroClientesComponent } from './components/cadastro-clientes/cadast
 import { InputMaskModule } from 'primeng/inputmask';
 import { DialogModule } from 'primeng/dialog';
 import { CurrencyMaskModule } from "ng2-currency-mask";
+import { CalendarModule } from 'primeng/calendar';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { CurrencyMaskModule } from "ng2-currency-mask";
     ChartModule,
     InputMaskModule,
     DialogModule,
-    CurrencyMaskModule
+    CurrencyMaskModule,
+    CalendarModule
   ],
   exports: [],
 

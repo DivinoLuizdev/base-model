@@ -11,7 +11,6 @@ export class ClientesComponent implements OnInit {
   clientes: Cliente[] = [];
   clienteSelecionado = new Cliente();
   displayCadastro = false;
-  indexPage = 0;
  
   // clienteSelecionado: Cliente = new Cliente();
   constructor(private clienteService: ClienteService) { }
@@ -71,7 +70,6 @@ export class ClientesComponent implements OnInit {
 
    showDialogCadastro() {
     this.clienteSelecionado = new Cliente();
-    this.indexPage = 0;
     this.displayCadastro = true;
    }
 }
