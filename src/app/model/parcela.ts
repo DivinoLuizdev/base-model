@@ -5,7 +5,7 @@ export class Parcela {
     numParcela: number
     valorParcela: number;
     valorJuros: number;
-    dataVencimento: Date;
+    dataVencimento: any;
     pagamento: Pagamento;
     dataPagamento: Date;
     valorPago: number;

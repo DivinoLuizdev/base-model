@@ -305,27 +305,64 @@
         </div>
       </div>
       <div class="row" style="padding-top: 20px;" *ngIf="emprestimo.parcelas.length > 0">
-        <p-table [value]="emprestimo.parcelas" [paginator]="false">
+        <p-table [value]="emprestimo.parcelas" [paginator]="false" dataKey="numParcela" editMode="row">
           <ng-template pTemplate="header">
             <tr>
               <th style="width: 2em;">Nº</th>
-              <th>Valor Parcela</th>
-              <th>Valor Juros</th>
-              <th>Total</th>
-              <th>Vencimento</th>
-              <th>Editar</th>
+              <th style="width: 20%;">Valor Parcela</th>
+              <th style="width: 20%;">Valor Juros</th>
+              <th style="width: 10%;">Total</th>
+              <th style="width: 30%;">Vencimento</th>
+              <th style="width: 10%;">Editar</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-p>
-            <tr>
+          <ng-template pTemplate="body" let-p let-editing="editing" let-ri="rowIndex">
+            <tr [pEditableRow]="p">
               <td>{{ p.numParcela }}</td>
-              <td>{{ p.valorParcela | currency: 'BRL' }}</td>
-              <td>{{ p.valorJuros | currency: 'BRL' }}</td>
-              <td>{{ p.valorParcela + p.valorJuros | currency: 'BRL' }}</td>
-              <td>{{ p.dataVencimento | date: 'dd/MM/yyyy'}}</td>
-              <td>
-                <button name="editarParcela" type="button" class="btn btn-primary"
-                    severity="info"><i class="pi pi-pencil"></i></button>
+              <td style="width: 20%;">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input currencyMask name="valorParcela" maxLength="13" ngModel 
+                      [(ngModel)]="p.valorParcela" title="Valor Parcela" [style]="{width: '100%'}"
+                      [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ p.valorParcela | currency: 'BRL' }}
+                  </ng-template>
+              </p-cellEditor>
+              </td>
+              <td style="width: 20%;">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input currencyMask name="valorJuros" maxLength="13" ngModel 
+                    [(ngModel)]="p.valorJuros" title="Valor Juros" [style]="{width: '100%'}"
+                    [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ p.valorJuros | currency: 'BRL' }}
+                  </ng-template>
+              </p-cellEditor>
+                
+              </td>
+              <td style="width: 10%;">{{ p.valorParcela + p.valorJuros | currency: 'BRL' }}</td>
+              <td style="width: 30%;">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-inputMask mask="99/99/9999" [(ngModel)]="p.dataVencimento" placeholder="dd/mm/yyyy"
+                    [style]="{width: '100%'}"  [ngModelOptions]="{standalone: true}"></p-inputMask>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ p.dataVencimento | date: 'dd/MM/yyyy'}}
+                  </ng-template>
+              </p-cellEditor>
+                
+              </td>
+              <td style="width: 20%;">
+                <div class="flex align-items-center justify-content-center gap-2">
+                  <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(p)" class="p-button-rounded p-button-text"></button>
+                  <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(p)" class="p-button-rounded p-button-text p-button-success mr-2"></button>
+                  <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(p, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+              </div>
               </td>
             </tr>
           </ng-template>

@@ -21,6 +21,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   estados = Object.values(Estados);
   displayEmprestimo = false;
   listaParcelas: number[] = [];
+  clonedParcelas: Parcela[] = [];
 
   @Input() cliente: Cliente;
   emprestimo: Emprestimo = new Emprestimo();
@@ -33,7 +34,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   mostrarCamposConjuge: boolean = false;
 
   ngOnInit() {
-    this.listaParcelas = [1,2,4,5,10];
+    this.listaParcelas = [1, 2, 4, 5, 10];
   }
 
   telefoneValido(input: any, form: any) {
@@ -60,14 +61,14 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   validarCEP(): boolean {
-    if(!this.cliente.endereco.cep || this.cliente.endereco.cep.length === 0) {
+    if (!this.cliente.endereco.cep || this.cliente.endereco.cep.length === 0) {
       return true;
     }
     return this.cliente.endereco.cep.replace(/\D/g, '').length === 8;
   }
 
   formatarCEP(): string {
-    if(!this.cliente.endereco.cep || this.cliente.endereco.cep.length === 0) {
+    if (!this.cliente.endereco.cep || this.cliente.endereco.cep.length === 0) {
       return "";
     }
     let cep = this.cliente.endereco.cep.replace(/\D/g, '');
@@ -83,7 +84,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   validarCPF(): boolean {
-    if(this.cliente.documento.cpf.length === 0) {
+    if (this.cliente.documento.cpf.length === 0) {
       return true;
     }
     let cpf = this.cliente.documento.cpf;
@@ -176,11 +177,11 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   calcularParcelasEmprestimo() {
     let valorTotal = 0;
     let saldoDevedor = this.emprestimo.valor;
-    let valorParcela = this.emprestimo.valor/this.emprestimo.numeroParcela;
+    let valorParcela = this.emprestimo.valor / this.emprestimo.numeroParcela;
     let vencimentoAtual = this.convertToDate(this.emprestimo.dataInicial);
 
     this.emprestimo.parcelas = [];
-    for(let i = 1; i <= this.emprestimo.numeroParcela; i++) {
+    for (let i = 1; i <= this.emprestimo.numeroParcela; i++) {
       let parcela = new Parcela();
       parcela.dataVencimento = this.deepcopy(vencimentoAtual);
       parcela.valorParcela = valorParcela;
@@ -195,6 +196,28 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     }
     this.emprestimo.valorTotal = valorTotal;
     console.log(this.emprestimo);
+  }
+
+  onRowEditInit(parcela: Parcela) {
+    parcela.dataVencimento = this.convertDateToString(parcela.dataVencimento);
+    this.clonedParcelas[parcela.numParcela] = { ...parcela };
+  }
+
+  onRowEditSave(parcela: Parcela) {
+    /* Adicionar validação
+    if (product.price > 0) {
+      delete this.clonedProducts[product.id];
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product is updated' });
+    } else {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Price' });
+    }*/
+    parcela.dataVencimento = this.convertToDate(parcela.dataVencimento);
+    delete this.clonedParcelas[parcela.numParcela];
+  }
+
+  onRowEditCancel(parcela: Parcela, index: number) {
+    this.emprestimo.parcelas[index] = this.clonedParcelas[parcela.numParcela];
+    delete this.clonedParcelas[parcela.numParcela];
   }
 
 }
