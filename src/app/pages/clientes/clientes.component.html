@@ -1,24 +1,27 @@
-<div>
-    <div style="  height: 20%; display: flex; align-items: center; padding: 10px;  ">
-        <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit"> <i class="pi pi-search"
-                    style="font-size: 1rem"></i></button>
 
-        </form>
-
-        <div style="width: 100%; display: flex;justify-content: end;  ">
-            <button type="button" class="btn btn-primary" (click)="showDialogCadastro()">
-                Cadastrar Cliente
-            </button>
-        </div>
-
-    </div>
-</div>
-
-<div class="card m-2">
+<h2 style="padding-left: 50px; padding-top: 20px;">Clientes</h2>
+<div class="card m-2" style="padding: 50px;">
     <p-table [value]="clientes" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
         [rowsPerPageOptions]="[2, 4, 6]">
+        <ng-template pTemplate="caption">
+          <div>
+            <div style="  height: 20%; display: flex; align-items: center; padding: 10px;  ">
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit"> <i class="pi pi-search"
+                            style="font-size: 1rem"></i></button>
+        
+                </form>
+        
+                <div style="width: 100%; display: flex;justify-content: end;  ">
+                    <button type="button" class="btn btn-primary" (click)="showDialogCadastro()">
+                        Cadastrar Cliente
+                    </button>
+                </div>
+        
+            </div>
+        </div>
+        </ng-template>
         <ng-template pTemplate="header">
             <tr>
                 <th>ID</th>
@@ -114,12 +117,6 @@
     </p-table>
   </div>
 </div> -->
-
-
-
-
-
- 
 
 <p-dialog header="Cadastro" [(visible)]="displayCadastro" [style]="{width: '50vw'}"  (onHide)="indexPage = 0">
   <app-cadastro-clientes   (atualizarClientes)="getClientes()" 

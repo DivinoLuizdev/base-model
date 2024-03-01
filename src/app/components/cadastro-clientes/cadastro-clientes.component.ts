@@ -18,11 +18,12 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   formulario: any = {};
   estadosCivis = Object.values(EstadoCivil);
   estados = Object.values(Estados);
+  displayEmprestimo = false;
 
   @Input() cliente: Cliente;
   @Input() indexPage = 0;
   emprestimo: Emprestimo = new Emprestimo();
-
+  emprestimos: Emprestimo[] = [];
   constructor(private formBuilder: FormBuilder, private clienteService: ClienteService) {
     super();
   }
@@ -31,16 +32,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   mostrarCamposConjuge: boolean = false;
 
   ngOnInit() {
-    //  this.onChangeEstadoCivil(this.formulario.get('estadoCivil')?.value);
-
   }
-
-  cepFormControl = new FormControl('', [Validators.pattern(/^\d{8}$/)]);
-
-  get cepInvalido() {
-    return this.cepFormControl.hasError('pattern') && this.cepFormControl.dirty;
-  }
-
 
   telefoneValido(input: any, form: any) {
     if (input.dirty || form.submitted) {
@@ -65,9 +57,18 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     }
   }
 
-  formatarCEP(cep: string): string {
+  validarCEP(): boolean {
+    if(!this.cliente.endereco.cep || this.cliente.endereco.cep.length === 0) {
+      return true;
+    }
+    return this.cliente.endereco.cep.replace(/\D/g, '').length === 8;
+  }
 
-    cep = cep.replace(/\D/g, '');
+  formatarCEP(): string {
+    if(!this.cliente.endereco.cep || this.cliente.endereco.cep.length === 0) {
+      return "";
+    }
+    let cep = this.cliente.endereco.cep.replace(/\D/g, '');
 
     return cep.replace(/^(\d{5})(\d{3})$/, '$1-$2');
   }
@@ -171,6 +172,11 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       this.emprestimo = new Emprestimo();
       this.indexPage = 0;
     }
+  }
+
+  novoEmprestimo() {
+    this.emprestimo = new Emprestimo();
+    this.displayEmprestimo = true;
   }
 
 }

@@ -5,75 +5,77 @@
         <div class="form-group">
           <label for="nome">Nome:</label>
           <input type="text" name="nome" id="nome" #nome="ngModel" ngModel class="form-control" required
-                autocomplete="off" [(ngModel)]="cliente.nome" placeholder="Digite aqui o Nome" title="Digite aqui o Nome">
-                <div class="text-danger" *ngIf="showError(nome, form)">
-                  O campo Nome é obrigatório
-                </div>
+            autocomplete="off" [(ngModel)]="cliente.nome" placeholder="Digite aqui o Nome" title="Digite aqui o Nome">
+          <div class="text-danger" *ngIf="showError(nome, form)">
+            O campo Nome é obrigatório
+          </div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="form-group">
           <label for="estadoCivil">Estado Civil:</label>
-          <select id="estadoCivil" name="estadoCivil" class="form-control"
-            (change)="onChangeEstadoCivil($event)" #estadoCivil="ngModel" ngModel [(ngModel)]="cliente.estadoCivil"> 
+          <select id="estadoCivil" name="estadoCivil" class="form-control" (change)="onChangeEstadoCivil($event)"
+            #estadoCivil="ngModel" ngModel [(ngModel)]="cliente.estadoCivil">
             <option *ngFor="let estadoCivil of estadosCivis" [value]="estadoCivil">{{ estadoCivil }}</option>
           </select>
-          <div *ngIf="showError(estadoCivil, form)"
-            class="text-danger">
+          <div *ngIf="showError(estadoCivil, form)" class="text-danger">
             <div>O Campo Estado Civil é obrigatório.</div>
           </div>
         </div>
       </div>
     </div>
-   <div class="row">
+    <div class="row">
       <div class="col-md-6">
         <div class="form-group">
           <label for="observacao">Observação:</label>
-          <textarea id="observacao" name="observacao" class="form-control" rows="3"
-          #observacao="ngModel" ngModel [(ngModel)]="cliente.observacao"></textarea>
+          <textarea id="observacao" name="observacao" class="form-control" rows="3" #observacao="ngModel" ngModel
+            [(ngModel)]="cliente.observacao"></textarea>
         </div>
       </div>
       <div class="col-md-6" *ngIf="mostrarCamposConjuge">
         <div class="form-group">
           <label for="nomeConjuge">Nome do Cônjuge:</label>
-          <input type="text" id="nomeConjuge" name="nomeConjuge" class="form-control"
-          #nomeConjuge="ngModel" ngModel [(ngModel)]="cliente.nomeConjuge">
+          <input type="text" id="nomeConjuge" name="nomeConjuge" class="form-control" #nomeConjuge="ngModel" ngModel
+            [(ngModel)]="cliente.nomeConjuge">
         </div>
       </div>
     </div>
-   <fieldset name="contato">
+    <fieldset name="contato">
       <legend>Contato</legend>
       <div class="row">
         <div class="col-md-4">
           <div class="form-group">
             <label for="telefone">Telefone:</label>
             <input type="text" required minlength="13" maxlength="14" #fone="ngModel" autocomplete="off" ngModel
-            [(ngModel)]="cliente.contato.telefone" name="fone" id="fone"
-            class="form-control" mask="(00) 000000009" (change)="formatarTelefone($event)"
-            placeholder="Digite o Telefone Principal" title="Digite o Telefone Principal" >
-            <div *ngIf="!telefoneValido(fone, form)" style="color: red;">Formato Telefone inválido. Use ddd+000000000.</div>
+              [(ngModel)]="cliente.contato.telefone" name="fone" id="fone" class="form-control" mask="(00) 000000009"
+              (change)="formatarTelefone($event)" placeholder="Digite o Telefone Principal"
+              title="Digite o Telefone Principal">
+            <div *ngIf="!telefoneValido(fone, form)" style="color: red;">Formato Telefone inválido. Use ddd+000000000.
+            </div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
             <label for="email">Email:</label>
-            <input type="text" minlength="5" maxlength="100" #email="ngModel" ngModel [(ngModel)]="cliente.contato.email"
-                name="email" id="email" autocomplete="off" class="form-control" placeholder="Digite aqui o Email" title="Digite aqui o Email"
-                pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
-                <div *ngIf="showError(email, form)" class="text-danger">
-                  O campo E-mail é obrigatório e deve ter o formato:
-                  <i>fulano@email.com</i>.
-                </div>
+            <input type="text" minlength="5" maxlength="100" #email="ngModel" ngModel
+              [(ngModel)]="cliente.contato.email" name="email" id="email" autocomplete="off" class="form-control"
+              placeholder="Digite aqui o Email" title="Digite aqui o Email"
+              pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
+            <div *ngIf="showError(email, form)" class="text-danger">
+              O campo E-mail é obrigatório e deve ter o formato:
+              <i>fulano@email.com</i>.
+            </div>
           </div>
         </div>
         <div class="col-md-4" *ngIf="mostrarCamposConjuge">
           <div class="form-group">
             <label for="telefoneConjuge">Telefone do Cônjuge:</label>
             <input type="text" minlength="13" maxlength="14" #foneConjuge="ngModel" autocomplete="off" ngModel
-            [(ngModel)]="cliente.contato.telefoneConjuge" name="telefoneConjuge" id="telefoneConjuge"
-            class="form-control" mask="(00) 000000009" (change)="formatarTelefone(foneConjuge)"
-            placeholder="Digite o Telefone" title="Digite o Telefone" >
-            <div *ngIf="!telefoneValido(foneConjuge, form)" style="color: red;">Formato Telefone inválido. Use ddd+000000000.</div>
+              [(ngModel)]="cliente.contato.telefoneConjuge" name="telefoneConjuge" id="telefoneConjuge"
+              class="form-control" mask="(00) 000000009" (change)="formatarTelefone(foneConjuge)"
+              placeholder="Digite o Telefone" title="Digite o Telefone">
+            <div *ngIf="!telefoneValido(foneConjuge, form)" style="color: red;">Formato Telefone inválido. Use
+              ddd+000000000.</div>
           </div>
         </div>
       </div>
@@ -84,40 +86,42 @@
         <div class="col-md-6">
           <div class="form-group">
             <label for="identidade">Identidade:</label>
-            <input type="text" id="identidade" name="identidade" class="form-control"
-            #identidade="ngModel" ngModel [(ngModel)]="cliente.documento.identidade">
+            <input type="text" id="identidade" name="identidade" class="form-control" #identidade="ngModel" ngModel
+              [(ngModel)]="cliente.documento.identidade">
           </div>
         </div>
         <div class="col-md-6">
           <div class="form-group">
             <label for="cpf">CPF:</label>
             <input type="text" [(ngModel)]="cliente.documento.cpf" name="inputCPF" id="inputCPF" mask="000.000.000-00"
-            title="Digite aqui o CPF" #inputCPF="ngModel" class="form-control" placeholder="Digite aqui o CPF"
-            required (change)="formatarCPF($event)" (keypress)="inputCPF.value.length < 11">
- 
-          <small *ngIf="showError(inputCPF, form)" class="text-danger">
-            O campo CPF obrigatório.
-          </small>
-          <small *ngIf="!validarCPF()" class="text-danger">
-            Campo CPF inválido.
-          </small>
+              title="Digite aqui o CPF" #inputCPF="ngModel" class="form-control" placeholder="Digite aqui o CPF"
+              required (change)="formatarCPF($event)" (keypress)="inputCPF.value.length < 11">
+
+            <small *ngIf="showError(inputCPF, form)" class="text-danger">
+              O campo CPF obrigatório.
+            </small>
+            <small *ngIf="!validarCPF()" class="text-danger">
+              Campo CPF inválido.
+            </small>
           </div>
         </div>
       </div>
     </fieldset>
-  <!--   <fieldset name="endereco">
+    <fieldset name="endereco">
       <legend>Endereço</legend>
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
             <label for="rua">Rua:</label>
-            <input type="text" id="rua" name="rua" class="form-control">
+            <input type="text" id="rua" name="rua" class="form-control" #rua="ngModel" ngModel
+              [(ngModel)]="cliente.endereco.rua">
           </div>
         </div>
         <div class="col-md-6">
           <div class="form-group">
             <label for="cidade">Cidade:</label>
-            <input type="text" id="cidade" name="cidade" class="form-control">
+            <input type="text" id="cidade" name="cidade" class="form-control" #cidade="ngModel" ngModel
+              [(ngModel)]="cliente.endereco.cidade">
           </div>
         </div>
       </div>
@@ -125,14 +129,16 @@
         <div class="col-md-4">
           <div class="form-group">
             <label for="cep">CEP:</label>
-            <input type="text" id="cep" [formControl]="cepFormControl" class="form-control">
-            <div *ngIf="cepInvalido" style="color: red;">Formato de CEP inválido. Use XXXXXXXX.</div>
+            <input type="text" id="cep" name="cep" class="form-control" #cep="ngModel" ngModel
+              [(ngModel)]="cliente.endereco.cep" (change)="formatarCEP()">
+            <div *ngIf="!validarCEP()" style="color: red;">Formato de CEP inválido. Use XXXXXXXX.</div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
             <label for="estado">Estado:</label>
-            <select id="estado" name="estado" class="form-control">
+            <select id="estado" name="estado" class="form-control" [(ngModel)]="cliente.endereco.estado"
+              #estado="ngModel" ngModel>
               <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
             </select>
           </div>
@@ -140,17 +146,20 @@
         <div class="col-md-4">
           <div class="form-group">
             <label for="numero">Número:</label>
-            <input type="text" id="numero" name="numero" class="form-control">
+            <input type="text" id="numero" name="numero" class="form-control" #numero="ngModel" ngModel
+              [(ngModel)]="cliente.endereco.numero">
           </div>
         </div>
       </div>
       <div class="form-group">
         <label for="complemento">Complemento:</label>
-        <input type="text" id="complemento" name="complemento" class="form-control">
+        <input type="text" id="complemento" name="complemento" class="form-control" #complemento="ngModel" ngModel
+          [(ngModel)]="cliente.endereco.complemento">
       </div>
       <div class="form-group">
         <label for="bairro">Bairro:</label>
-        <input type="text" id="bairro" name="bairro" class="form-control">
+        <input type="text" id="bairro" name="bairro" class="form-control" #bairro="ngModel" ngModel
+          [(ngModel)]="cliente.endereco.bairro">
       </div>
     </fieldset>
     <fieldset name="localTrabalho">
@@ -158,60 +167,101 @@
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            <label for="ruaTrabalho">Rua:</label>
-            <input type="text" id="ruaTrabalho" name="rua" class="form-control">
+            <label for="rua">Rua:</label>
+            <input type="text" id="rua" name="rua" class="form-control" #rua="ngModel" ngModel
+              [(ngModel)]="cliente.localTrabalho.rua">
           </div>
         </div>
         <div class="col-md-6">
           <div class="form-group">
-            <label for="cidadeTrabalho">Cidade:</label>
-            <input type="text" id="cidadeTrabalho" name="cidade" class="form-control">
+            <label for="cidade">Cidade:</label>
+            <input type="text" id="cidade" name="cidade" class="form-control" #cidade="ngModel" ngModel
+              [(ngModel)]="cliente.localTrabalho.cidade">
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-md-4">
           <div class="form-group">
-            <label for="cepTrabalho">CEP:</label>
-            <input type="text" id="cepTrabalho" [formControl]="cepFormControl" class="form-control">
-            <div *ngIf="cepInvalido" style="color: red;">Formato de CEP inválido. Use XXXXXXXX.</div>
+            <label for="cepLocalTrabalho">CEP:</label>
+            <input type="text" id="cepLocalTrabalho" name="cepLocalTrabalho" class="form-control"
+              #cepLocalTrabalho="ngModel" ngModel [(ngModel)]="cliente.localTrabalho.cep" (change)="formatarCEP()">
+            <div *ngIf="!validarCEP()" style="color: red;">Formato de CEP inválido. Use XXXXXXXX.</div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label for="estadoTrabalho">Estado:</label>
-            <select id="estadoTrabalho" name="estado" class="form-control">
+            <label for="estadoLocalTrabalho">Estado:</label>
+            <select id="estadoLocalTrabalho" name="estadoLocalTrabalho" class="form-control"
+              [(ngModel)]="cliente.localTrabalho.estado" #estadoLocalTrabalho="ngModel" ngModel>
               <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
             </select>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label for="numeroTrabalho">Número:</label>
-            <input type="text" id="numeroTrabalho" name="numero" class="form-control">
+            <label for="numeroLocalTrabalho">Número:</label>
+            <input type="text" id="numeroLocalTrabalho" name="numeroLocalTrabalho" class="form-control"
+              #numeroLocalTrabalho="ngModel" ngModel [(ngModel)]="cliente.localTrabalho.numero">
           </div>
         </div>
       </div>
       <div class="form-group">
-        <label for="complementoTrabalho">Complemento:</label>
-        <input type="text" id="complementoTrabalho" name="complemento" class="form-control">
+        <label for="complementoLocalTrabalho">Complemento:</label>
+        <input type="text" id="complementoLocalTrabalho" name="complementoLocalTrabalho" class="form-control"
+          #complementoLocalTrabalho="ngModel" ngModel [(ngModel)]="cliente.localTrabalho.complemento">
       </div>
       <div class="form-group">
-        <label for="bairroTrabalho">Bairro:</label>
-        <input type="text" id="bairroTrabalho" name="bairro" class="form-control">
+        <label for="bairroLocalTrabalho">Bairro:</label>
+        <input type="text" id="bairroLocalTrabalho" name="bairroLocalTrabalho" class="form-control"
+          #bairroLocalTrabalho="ngModel" ngModel [(ngModel)]="cliente.localTrabalho.bairro">
       </div>
-    </fieldset> -->
+    </fieldset>
     <div class="row">
       <div class="col-md-12" style="text-align: right;">
-        <button type="button" class="btn btn-primary" (click)="proximo()">Próximo</button>
-        <!-- [disabled]="!formulario.valid"-->
+        <button type="button" class="btn btn-primary" (click)="proximo()" >Próximo</button>
+        <!-- [disabled]="!form.valid" -->
       </div>
     </div>
   </div>
-  <div id="clientes" *ngIf="indexPage === 1">
+  <div id="emprestimos" *ngIf="indexPage === 1">
     <fieldset name="emprestimo">
-      <legend>Empréstimo</legend>
-      <div class="row">
+      <legend>Empréstimos</legend>
+      <div class="row" style="padding-top: 10px;">
+        <p-table [value]="emprestimos" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
+          [rowsPerPageOptions]="[2, 4, 6]">
+          <ng-template pTemplate="caption">
+            <button style="margin: 2px;" type="button" class="btn btn-primary"
+            severity="info" (click)="novoEmprestimo()">Adicionar</button>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Data Empréstimo</th>
+              <th>Valor</th>
+              <th>Parcelas</th>
+              <th>Juros</th>
+              <th>Ações</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-e>
+            <tr>
+              <td>{{ e.dataEmprestimo }}</td>
+              <td>{{ e.valorTotal }}</td>
+              <td>{{ e.numeroParcela }}</td>
+              <td>{{ e.valorJuros }}</td>
+              <td>
+                <button style="margin: 2px;" type="button"
+                  class="btn btn-danger">Excluir</button>
+
+
+                <button style="margin: 2px;" type="button" class="btn btn-primary"
+                 severity="info">Editar</button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      <!-- <div class="row">
         <div class="col-md-6">
           <div class="form-group">
             <label for="valor">Valor:</label>
@@ -220,7 +270,7 @@
             [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
           </div>
         </div>
-      </div>
+      </div> -->
     </fieldset>
 
     <div class="row">
@@ -232,4 +282,7 @@
       </div>
     </div>
   </div>
+  <p-dialog header="Novo Empréstimo" [(visible)]="displayEmprestimo" [style]="{width: '50vw'}">
+    Cadastrar empréstimo
+  </p-dialog>
 </form>

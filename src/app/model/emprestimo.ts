@@ -5,6 +5,7 @@ import { StatusEmprestimo } from "./status-emprestimo";
 export class Emprestimo {
     id: number;
     valor: number;
+    dataEmprestimo: Date;
     dataInicial: Date;
     dataFinal: Date;
     valorTotal: number;
