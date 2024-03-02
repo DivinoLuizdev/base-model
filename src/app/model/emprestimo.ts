@@ -13,5 +13,5 @@ export class Emprestimo {
     parcelas: Parcela[] = [];
     dataPagamentos: Pagamento[] = [];
     valorJuros: number;
-    status: StatusEmprestimo;
+    status: StatusEmprestimo = StatusEmprestimo.PENDENTE;
 }

@@ -1,13 +1,15 @@
 import { Cliente } from 'src/app/model/cliente';
 import { Estados } from './../../model/estados';
 
-import { Component, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ClienteService } from 'src/app/service/cliente.service';
 import { EstadoCivil } from '../../model/estado-civil';
 import { Emprestimo } from 'src/app/model/emprestimo';
 import { AbstractForm } from 'src/app/model/abastract-form';
 import { Parcela } from 'src/app/model/parcela';
+import { MessageService } from 'primeng/api';
+import { StatusEmprestimo } from 'src/app/model/status-emprestimo';
 
 
 @Component({
@@ -16,18 +18,20 @@ import { Parcela } from 'src/app/model/parcela';
   styleUrls: ['./cadastro-clientes.component.scss']
 })
 export class CadastroClientesComponent extends AbstractForm implements OnInit, OnChanges {
-  formulario: any = {};
   estadosCivis = Object.values(EstadoCivil);
   estados = Object.values(Estados);
   displayEmprestimo = false;
   listaParcelas: number[] = [];
   clonedParcelas: Parcela[] = [];
+  editingIndex = -1;
 
   @Input() cliente: Cliente;
+  @Output() saveEvent: EventEmitter<Cliente> = new EventEmitter()
   emprestimo: Emprestimo = new Emprestimo();
-  emprestimos: Emprestimo[] = [];
-  constructor(private formBuilder: FormBuilder, private clienteService: ClienteService) {
-    super();
+  constructor(private clienteService: ClienteService,
+    private messageService: MessageService) {
+    super(messageService);
+
   }
 
 
@@ -122,29 +126,6 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       parseInt(cpf.charAt(10)) === segundoDigito
     );
   }
-  // onSubmit() {
-  //   if (this.formulario.valid) {
-  //     console.log(this.formulario.value);
-
-
-  //     this.formulario.value.endereco.cep = this.formatarCEP( this.formulario.value.endereco.cep)
-  //     this.formulario.value.localTrabalho.cep  = this.formatarCEP(this.formulario.value.localTrabalho.cep )
-  //     this.formulario.value.localTrabalho.estado =   "GO"
-  //     // formatarCEP(cep: string)
-  //     // this.formatarTelefone(event: any)
-  //     // Chame o serviço para enviar os dados para o backend
-  //     this.clienteService.criarCliente(this.formulario.value).subscribe(
-  //       response => {
-  //         console.log('Cliente criado com sucesso!', response);
-  //       },
-  //       error => {
-  //         console.error('Erro ao criar cliente', error);
-  //       }
-  //     );
-  //   } else {
-  //     // Formulário inválido, manipule conforme necessário
-  //   }
-  // }
 
   onChangeEstadoCivil(event: any) {
     const estadoCivil = event.target.value;
@@ -157,8 +138,23 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   salvar() {
-    console.log(this.emprestimo);
-    console.log(this.cliente);
+    this.clienteService.criarCliente(this.cliente).subscribe(res =>{
+      this.notification.showSucesso('Dados Gravados com sucesso');
+      this.saveEvent.emit(this.cliente);
+      this.resetForm();
+    }, error => {
+      this.notification.showErro('Falha ao adicionar cliente. Entre em contato com o suporte para mais informações');
+      console.log(error);
+    });
+  }
+
+  resetForm() {
+    this.cliente = new Cliente();
+    this.emprestimo = new Emprestimo();
+    this.displayEmprestimo = false;
+    this.listaParcelas = [];
+    this.clonedParcelas = [];
+    this.editingIndex = -1;
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -170,15 +166,26 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   novoEmprestimo() {
+    this.editingIndex - 1;
     this.emprestimo = new Emprestimo();
     this.displayEmprestimo = true;
   }
 
+  editarEmprestimo(emprestimo: Emprestimo, index: number) {
+    this.editingIndex = index;
+    this.emprestimo = emprestimo;
+    this.displayEmprestimo = true;
+  }
+
   calcularParcelasEmprestimo() {
+    if (!this.validarNovoEmprestimo()) {
+      return;
+    }
     let valorTotal = 0;
     let saldoDevedor = this.emprestimo.valor;
     let valorParcela = this.emprestimo.valor / this.emprestimo.numeroParcela;
     let vencimentoAtual = this.convertToDate(this.emprestimo.dataInicial);
+    let dataTermino: Date = null;
 
     this.emprestimo.parcelas = [];
     for (let i = 1; i <= this.emprestimo.numeroParcela; i++) {
@@ -192,10 +199,66 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       saldoDevedor = this.emprestimo.valor - (valorParcela * i)
       valorTotal += parcela.valorParcela + parcela.valorJuros;
 
-      this.emprestimo.parcelas.push(parcela)
+      this.emprestimo.parcelas.push(parcela);
+      dataTermino = this.convertToDate(vencimentoAtual);
     }
     this.emprestimo.valorTotal = valorTotal;
-    console.log(this.emprestimo);
+    this.emprestimo.dataFinal = this.convertToDate(dataTermino);
+    this.emprestimo.dataInicial = this.convertToDate(this.emprestimo.dataInicial);
+  }
+
+  validarNovoEmprestimo(): boolean {
+    let valido = true;
+
+    if (!this.emprestimo.valor || this.emprestimo.valor === 0) {
+      valido = false;
+      this.notification.showErro("O campo 'Valor' é obrigatório e deve ser maior que 0");
+    }
+
+    if (!this.emprestimo.numeroParcela) {
+      valido = false;
+      this.notification.showErro("O campo 'Quantidade Parcelas' é obrigatório");
+    }
+
+    if (!this.emprestimo.dataInicial) {
+      valido = false;
+      this.notification.showErro("O campo 'Vencimento 1ª Parcela' é obrigatório");
+    }
+
+    if (!this.isValidDate(this.emprestimo.dataInicial)) {
+      valido = false;
+      this.notification.showErro("Informe uma data válida para o campo 'Vencimento 1ª Parcela");
+    }
+
+    const hoje = new Date();
+    const data = this.convertToDate(this.emprestimo.dataInicial);
+    if (data <= hoje) {
+      valido = false;
+      this.notification.showErro("A data de vencimento da 1ª parcela deve ser maior ou igual a data de hoje");
+    }
+
+    return valido;
+  }
+
+  validarParcelamento(): boolean {
+    if (!this.validarNovoEmprestimo()) {
+      return false;
+    }
+
+    if (this.emprestimo.parcelas.length <= 0) {
+      this.notification.showAlerta("Clique na opção 'Calcular' para gerar o parcelamento.");
+      return false;
+    }
+
+    for (const p of this.emprestimo.parcelas) {
+      const hoje = new Date();
+      const data = this.convertToDate(p.dataVencimento);
+      if (data <= hoje) {
+        this.notification.showAlerta(`A data de vencimento da parcela de nº ${p.numParcela} não pode ser menor que a data de hoje.`);
+        return false;
+      }
+    }
+    return true;
   }
 
   onRowEditInit(parcela: Parcela) {
@@ -204,20 +267,66 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   onRowEditSave(parcela: Parcela) {
-    /* Adicionar validação
-    if (product.price > 0) {
-      delete this.clonedProducts[product.id];
-      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product is updated' });
-    } else {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Price' });
-    }*/
+    if (!this.validarParcelamento()) {
+      return;
+    }
+    const parcelaAnterior = this.clonedParcelas[parcela.numParcela];
     parcela.dataVencimento = this.convertToDate(parcela.dataVencimento);
+    this.emprestimo.valorTotal -= parcelaAnterior.valorParcela - parcelaAnterior.valorJuros;
+    this.emprestimo.valorTotal += parcela.valorParcela + parcela.valorJuros;
+
     delete this.clonedParcelas[parcela.numParcela];
   }
 
   onRowEditCancel(parcela: Parcela, index: number) {
     this.emprestimo.parcelas[index] = this.clonedParcelas[parcela.numParcela];
     delete this.clonedParcelas[parcela.numParcela];
+  }
+
+  adicionarEmprestimo() {
+    if (!this.validarParcelamento() || !this.validarNovoEmprestimo()) {
+      return;
+    }
+
+    if (this.editingIndex === -1) {
+      this.cliente.emprestimos.push({ ...this.emprestimo });
+    } else {
+      this.cliente.emprestimos[this.editingIndex] = this.emprestimo;
+    }
+    this.emprestimo = new Emprestimo();
+    this.displayEmprestimo = false;
+  }
+
+  obterDescricaoStatus(status: StatusEmprestimo): string {
+    switch (status) {
+      case 1:
+        return 'Pendente';
+      case 2:
+        return 'Aprovado';
+      case 3:
+        return 'Negado';
+      case 4:
+        return 'Quitado';
+      case 5:
+        return 'Em Atraso';
+      default:
+        return 'Outro';
+    }
+  }
+
+  excluirEmprestimo(emp: Emprestimo, index: number) {
+    if (emp.id > 0) {
+      //TODO: excluir do banco
+    }
+
+    if (index > -1 && index < this.cliente.emprestimos.length) {
+      this.cliente.emprestimos.splice(index, 1);
+    } else {
+      this.notification.showErro('Falha ao excluir item da lista.')
+      return ;
+    }
+
+    this.notification.showSucesso('Registro excluído com sucesso.');
   }
 
 }

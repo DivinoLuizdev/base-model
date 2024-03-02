@@ -7,6 +7,4 @@ export class Parcela {
     valorJuros: number;
     dataVencimento: any;
     pagamento: Pagamento;
-    dataPagamento: Date;
-    valorPago: number;
 }

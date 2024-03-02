@@ -14,14 +14,9 @@ export class ClienteService {
     return this.http.get<Cliente[]>(`${this.apiUrl}/api/cliente`);
   }
 
-  criarCliente(cliente: any):Observable<any>{
+  criarCliente(cliente: any): Observable<any>{
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<any>(`${this.apiUrl}/api/cliente`,cliente, { headers }).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('Erro ao criar Cliente', error);
-        return throwError('Erro ao criar Cliente . Tente novamente mais tarde.');
-      })
-    );
+    return this.http.post<any>(`${this.apiUrl}/api/cliente`,cliente, { headers });
   }
 
   atualizarCliente(id: number, cliente:Cliente): Observable<Cliente> {

@@ -1,6 +1,14 @@
 import { NgForm } from "@angular/forms";
+import { MensagemAlerta } from "./message.util";
+import { MessageService } from "primeng/api";
 
 export abstract class AbstractForm {
+
+    notification: MensagemAlerta;
+    constructor(msg: MessageService) {
+        this.notification = new MensagemAlerta(msg);
+    }
+
     showError(input: any, form: NgForm) {
         return input && input.invalid && (input.touched || form.submitted);
     }
@@ -13,7 +21,6 @@ export abstract class AbstractForm {
     }
 
     convertDateToString(data: any): string {
-        debugger
         if (typeof data === 'string') {
             if (data.includes('/')) {
                 return data;
@@ -34,4 +41,39 @@ export abstract class AbstractForm {
         return JSON.parse(JSON.stringify(o));
     }
 
+    isValidDate(data: Date) {
+        
+          // Verifica o formato da data usando uma expressão regular
+  const datePattern = /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/;
+  const match = this.convertDateToString(data).match(datePattern);
+  if (!match) {
+    return false;
+  }
+
+  // Extrai dia, mês e ano da string de data
+  const day = parseInt(match[1], 10);
+  const month = parseInt(match[2], 10);
+  const year = parseInt(match[3], 10);
+
+  // Verifica o mês de fevereiro em anos bissextos
+  if (month === 2) {
+    const isLeap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+    if (day > 29 || (day === 29 && !isLeap)) {
+      return false;
+    }
+  }
+
+  // Verifica os meses que têm 30 dias
+  if ((month === 4 || month === 6 || month === 9 || month === 11) && day > 30) {
+    return false;
+  }
+
+  // Verifica se o ano é razoável (opcional)
+  // const currentYear = new Date().getFullYear();
+  // if (year < 1900 || year > currentYear) {
+  //   return false;
+  // }
+
+  return true;
+    }
 }

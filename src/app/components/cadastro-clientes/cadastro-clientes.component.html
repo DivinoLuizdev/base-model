@@ -219,7 +219,7 @@
     <fieldset name="emprestimo">
       <legend>Empréstimos</legend>
       <div class="row" style="padding-top: 10px;">
-        <p-table [value]="emprestimos" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
+        <p-table [value]="cliente.emprestimos" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
           [rowsPerPageOptions]="[2, 4, 6]">
           <ng-template pTemplate="caption">
             <button style="margin: 2px;" type="button" class="btn btn-primary"
@@ -227,26 +227,27 @@
           </ng-template>
           <ng-template pTemplate="header">
             <tr>
-              <th>Data Empréstimo</th>
-              <th>Valor</th>
-              <th>Parcelas</th>
-              <th>Juros</th>
+              <th>Valor Empréstimo</th>
+              <th>Total a receber</th>
+              <th>Qtde. Parcelas</th>
+              <th>Status</th>
               <th>Ações</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-e>
+          <ng-template pTemplate="body" let-e let-ri="rowIndex">
             <tr>
-              <td>{{ e.dataEmprestimo }}</td>
-              <td>{{ e.valorTotal }}</td>
+              <td>{{ e.valor | currency: 'BRL' }}</td>
+              <td>{{ e.valorTotal | currency: 'BRL' }}</td>
               <td>{{ e.numeroParcela }}</td>
-              <td>{{ e.valorJuros }}</td>
+              <td>{{ obterDescricaoStatus(e.status) }}</td>
               <td>
                 <button style="margin: 2px;" type="button"
-                  class="btn btn-danger">Excluir</button>
+                  class="btn btn-danger"
+                  (click)="excluirEmprestimo(e, ri)">Excluir</button>
 
 
                 <button style="margin: 2px;" type="button" class="btn btn-primary"
-                 severity="info">Editar</button>
+                 severity="info" (click)="editarEmprestimo(e, ri)">Editar</button>
               </td>
             </tr>
           </ng-template>
@@ -381,12 +382,14 @@
   <ng-template pTemplate="footer">
     <div class="row">
       <div class="col-md-6" style="text-align: left;">
-      <button name="cancelarParcelas" type="button" class="btn btn-secondary">
+      <button name="cancelarParcelas" type="button" class="btn btn-secondary"
+        (click)="displayEmprestimo = false">
         <i class="pi pi-cancel"></i> Cancelar</button>
       </div>
       <div class="col-md-6" style="text-align: right;">
   
       <button name="adicionarParcelas" type="button" class="btn btn-primary"
+        (click)="adicionarEmprestimo()"
                   severity="info"><i class="pi pi-confirm"></i> Adicionar</button>
       </div>
     </div>

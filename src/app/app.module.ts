@@ -24,6 +24,8 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { DialogModule } from 'primeng/dialog';
 import { CurrencyMaskModule } from "ng2-currency-mask";
 import { CalendarModule } from 'primeng/calendar';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 
 @NgModule({
@@ -55,11 +57,12 @@ import { CalendarModule } from 'primeng/calendar';
     InputMaskModule,
     DialogModule,
     CurrencyMaskModule,
-    CalendarModule
+    CalendarModule,
+    ToastModule
   ],
   exports: [],
 
-  providers: [],
+  providers: [MessageService],
   
   bootstrap: [AppComponent]
 })

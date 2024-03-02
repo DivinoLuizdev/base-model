@@ -16,7 +16,5 @@ export class Cliente {
   localTrabalho: Endereco = new Endereco();
   emprestimos: Emprestimo[] = [];
 
-  //teste
-  valor: number
   constructor() {}
 }
