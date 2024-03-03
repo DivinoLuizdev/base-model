@@ -32,7 +32,7 @@
                 <th>Observação</th>
                 <th>CPF</th>
                 <th>Identidade</th>
-                <th>Editar/Visualizar</th>
+                <th>Ações</th>
                 
             </tr>
         </ng-template>
@@ -49,12 +49,15 @@
 
                 
                 <td >
-                    <button  (click)="deletarCliente(cliente.id)" style="margin: 2px;" type="button" class="btn btn-danger"     
-                     >Excluir</button>
+                    <button [disabled]="cliente.emprestimos.length > 0"  (click)="deletarCliente(cliente.id)" style="margin: 2px;" type="button" class="btn btn-danger"     
+                     title="Excluir Cliente"><i class="pi pi-trash"></i></button>
                 
                
-                    <button style="margin: 2px;" type="button" class="btn btn-primary" (click)="showDialogEdit(cliente)"
-                    severity="info">Editar</button>
+                    <button style="margin: 2px;" type="button" class="btn btn-primary" (click)="showDialogEdit(cliente, false)"
+                    severity="info" title="Editar Cliente"><i class="pi pi-pencil"></i></button>
+
+                    <button style="margin: 2px;" type="button" class="btn btn-primary" (click)="showDialogEdit(cliente, true)"
+                    severity="info" title="Novo Crediário"><i class="pi pi-money-bill"></i></button>
                 </td>
                 
                  
@@ -122,5 +125,6 @@
 <p-dialog header="Cadastro" [(visible)]="displayCadastro" [style]="{width: '50vw'}"  [modal]="true"
 [draggable]="false" [resizable]="false">
   <app-cadastro-clientes 
-    [cliente]="clienteSelecionado" (saveEvent)="afterSave($event)"> </app-cadastro-clientes>
+    [cliente]="clienteSelecionado" (saveEvent)="afterSave($event)"
+    [somenteCrediario]="isCrediario"> </app-cadastro-clientes>
 </p-dialog>

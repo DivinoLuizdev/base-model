@@ -1,5 +1,5 @@
 <form class="container mt-4" #form="ngForm" novalidate autocomplete="off">
-    <div class="row">
+    <div class="row" *ngIf="!somenteCrediario">
       <div class="col-md-6">
         <div class="form-group">
           <label for="nome">Nome:</label>
@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div class="row" *ngIf="!somenteCrediario">
       <div class="col-md-6">
         <div class="form-group">
           <label for="observacao">Observação:</label>
@@ -39,7 +39,7 @@
         </div>
       </div>
     </div>
-    <fieldset name="contato">
+    <fieldset name="contato" *ngIf="!somenteCrediario">
       <legend>Contato</legend>
       <div class="row">
         <div class="col-md-4">
@@ -79,7 +79,7 @@
         </div>
       </div>
     </fieldset>
-    <fieldset name="documento">
+    <fieldset name="documento" *ngIf="!somenteCrediario">
       <legend>Documento</legend>
       <div class="row">
         <div class="col-md-6">
@@ -106,7 +106,7 @@
         </div>
       </div>
     </fieldset>
-    <fieldset name="endereco">
+    <fieldset name="endereco" *ngIf="!somenteCrediario">
       <legend>Endereço</legend>
       <div class="row">
         <div class="col-md-6">
@@ -161,7 +161,7 @@
           [(ngModel)]="cliente.endereco.bairro">
       </div>
     </fieldset>
-    <fieldset name="localTrabalho">
+    <fieldset name="localTrabalho" *ngIf="!somenteCrediario">
       <legend>Local de Trabalho</legend>
       <div class="row">
         <div class="col-md-6">
@@ -309,7 +309,7 @@
           <div class="form-group">
             <label for="calcular">&nbsp;</label>
             <button name="calcular" type="button" class="btn btn-primary form-control"
-            style="height: calc(2.25rem + 14px);"
+            style="height: calc(2.25rem + 14px);" [disabled]="emprestimo.id"
             severity="info" (click)="calcularParcelasEmprestimo()"><i class="pi pi-calculator"></i> Calcular</button>
           </div>
           

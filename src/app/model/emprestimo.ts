@@ -6,7 +6,7 @@ export class Emprestimo {
     id: number;
     valor: number;
     dataEmprestimo: Date = new Date();
-    dataInicial: Date;
+    dataInicial: any;
     dataFinal: Date;
     valorTotal: number;
     numeroParcela: number;

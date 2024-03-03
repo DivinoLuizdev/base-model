@@ -27,6 +27,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   editingIndex = -1;
 
   @Input() cliente: Cliente;
+  @Input() somenteCrediario: boolean
   @Output() saveEvent: EventEmitter<Cliente> = new EventEmitter()
   emprestimo: Emprestimo = new Emprestimo();
   constructor(private clienteService: ClienteService,
@@ -185,17 +186,21 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       this.cliente = new Cliente();
       this.emprestimo = new Emprestimo();
       this.displayEmprestimo = false;
+      this.somenteCrediario = false;
     }
   }
 
   novoEmprestimo() {
     this.editingIndex - 1;
     this.emprestimo = new Emprestimo();
+    this.listaParcelas = [1, 2, 4, 5, 10];
     this.displayEmprestimo = true;
   }
 
   editarEmprestimo(emprestimo: Emprestimo, index: number) {
     this.editingIndex = index;
+    this.listaParcelas = [1, 2, 4, 5, 10];
+    emprestimo.dataInicial = this.convertDateToString(emprestimo.dataInicial);
     this.emprestimo = emprestimo;
     this.displayEmprestimo = true;
   }
@@ -204,6 +209,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     if (!this.validarNovoEmprestimo()) {
       return;
     }
+    debugger;
     let valorTotal = 0;
     let saldoDevedor = this.emprestimo.valor;
     let valorParcela = this.emprestimo.valor / this.emprestimo.numeroParcela;
@@ -311,6 +317,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       return;
     }
 
+    this.emprestimo.dataInicial = this.convertToDate(this.emprestimo.dataInicial);
     if (this.editingIndex === -1) {
       this.cliente.emprestimos.push({ ...this.emprestimo });
     } else {

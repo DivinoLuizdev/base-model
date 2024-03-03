@@ -13,6 +13,7 @@ export class ClientesComponent extends AbstractForm implements OnInit {
   clientes: Cliente[] = [];
   clienteSelecionado = new Cliente();
   displayCadastro = false;
+  isCrediario = false;
  
   constructor(private clienteService: ClienteService,
     private ms: MessageService) { 
@@ -54,11 +55,13 @@ export class ClientesComponent extends AbstractForm implements OnInit {
 
    showDialogCadastro() {
     this.clienteSelecionado = new Cliente();
+    this.isCrediario = false;
     this.displayCadastro = true;
    }
 
-   showDialogEdit(cliente: Cliente) {
+   showDialogEdit(cliente: Cliente, isCrediario: boolean) {
     this.clienteSelecionado = cliente;
+    this.isCrediario = isCrediario;
     this.displayCadastro = true;
    }
 
