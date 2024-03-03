@@ -14,6 +14,10 @@ export class ClienteService {
     return this.http.get<Cliente[]>(`${this.apiUrl}/api/cliente`);
   }
 
+  listarPorCpf(cpf: String): Observable<Cliente> {
+    return this.http.get<Cliente>(`${this.apiUrl}/api/cliente/cpf/${cpf}`)
+  }
+
   criarCliente(cliente: any): Observable<any>{
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.post<any>(`${this.apiUrl}/api/cliente`,cliente, { headers });
@@ -25,6 +29,10 @@ export class ClienteService {
 
   deletarCliente(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/api/cliente/${id}`);
+  }
+
+  deletarEmprestimo(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/api/emprestimo/${id}`);
   }
 
 }

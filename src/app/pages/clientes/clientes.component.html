@@ -7,9 +7,10 @@
           <div>
             <div style="  height: 20%; display: flex; align-items: center; padding: 10px;  ">
                 <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit"> <i class="pi pi-search"
-                            style="font-size: 1rem"></i></button>
+                    <input class="form-control me-2" type="text" placeholder="Pesquisar por Nome" aria-label="Pesquisar por Nome"
+                    #filtroInput>
+                    <button class="btn btn-outline-success" type="button"> <i class="pi pi-search"
+                            style="font-size: 1rem" (click)="filtrarPorNome(filtroInput.value)"></i></button>
         
                 </form>
         
@@ -52,7 +53,7 @@
                      >Excluir</button>
                 
                
-                    <button style="margin: 2px;" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal"
+                    <button style="margin: 2px;" type="button" class="btn btn-primary" (click)="showDialogEdit(cliente)"
                     severity="info">Editar</button>
                 </td>
                 

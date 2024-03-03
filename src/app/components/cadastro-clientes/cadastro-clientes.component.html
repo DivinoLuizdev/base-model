@@ -217,7 +217,7 @@
       </div>
     </fieldset>
     <fieldset name="emprestimo">
-      <legend>Empréstimos</legend>
+      <legend>Crediários</legend>
       <div class="row" style="padding-top: 10px;">
         <p-table [value]="cliente.emprestimos" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
           [rowsPerPageOptions]="[2, 4, 6]">
@@ -227,7 +227,7 @@
           </ng-template>
           <ng-template pTemplate="header">
             <tr>
-              <th>Valor Empréstimo</th>
+              <th>Valor Crediário</th>
               <th>Total a receber</th>
               <th>Qtde. Parcelas</th>
               <th>Status</th>
@@ -257,16 +257,16 @@
 
     <div class="row">
       <div class="col-md-12" style="text-align: right;">
-        <button type="button" class="btn btn-primary" (click)="salvar()" >Salvar</button>
-        <!-- [disabled]="!form.valid" -->
+        <button type="button" class="btn btn-primary" (click)="validarAoSalvar()" 
+        [disabled]="!form.valid">Salvar</button>
       </div>
     </div>
-  <p-dialog header="Novo Empréstimo" [(visible)]="displayEmprestimo" [style]="{width: '60vw'}"
+  <p-dialog header="Lançamento de Crediário" [(visible)]="displayEmprestimo" [style]="{width: '60vw'}"
   [modal]="true" [draggable]="false" [resizable]="false">
     <div class="row">
     <fieldset name="novoEmprestimo">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
           <div class="form-group">
             <label for="valor">Valor:</label>
             <input currencyMask name="valor" maxLength="13" #valor="ngModel" ngModel 
@@ -275,9 +275,9 @@
             [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <div class="form-group">
-            <label for="qtdeParcelas">Quantidade Parcelas:</label>
+            <label for="qtdeParcelas">Qtde Parcelas:</label>
             <select id="qtdeParcelas" name="qtdeParcelas" class="form-control"
               style="height: calc(2.25rem + 14px);"
               #qtdeParcelas="ngModel" ngModel [(ngModel)]="emprestimo.numeroParcela">
@@ -296,6 +296,16 @@
           </div>
         </div>
         <div class="col-md-3">
+          <div class="form-group">
+            <label for="status">Status:</label>
+            <select id="status" name="status" class="form-control"
+              style="height: calc(2.25rem + 14px);"
+              #status="ngModel" ngModel [(ngModel)]="emprestimo.status">
+              <option *ngFor="let p of listaStatus" [value]="p">{{obterDescricaoStatus(p)}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-2">
           <div class="form-group">
             <label for="calcular">&nbsp;</label>
             <button name="calcular" type="button" class="btn btn-primary form-control"

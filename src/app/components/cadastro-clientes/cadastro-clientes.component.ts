@@ -21,6 +21,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   estadosCivis = Object.values(EstadoCivil);
   estados = Object.values(Estados);
   displayEmprestimo = false;
+  listaStatus: StatusEmprestimo[] = [];
   listaParcelas: number[] = [];
   clonedParcelas: Parcela[] = [];
   editingIndex = -1;
@@ -39,6 +40,14 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
 
   ngOnInit() {
     this.listaParcelas = [1, 2, 4, 5, 10];
+    this.listaStatus = [
+      StatusEmprestimo.PENDENTE,
+      StatusEmprestimo.APROVADO,
+      StatusEmprestimo.NEGADO,
+      StatusEmprestimo.QUITADO,
+      StatusEmprestimo.EM_ATRASO,
+      StatusEmprestimo.OUTRO
+    ]
   }
 
   telefoneValido(input: any, form: any) {
@@ -138,7 +147,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   salvar() {
-    this.clienteService.criarCliente(this.cliente).subscribe(res =>{
+   this.clienteService.criarCliente(this.cliente).subscribe(res =>{
       this.notification.showSucesso('Dados Gravados com sucesso');
       this.saveEvent.emit(this.cliente);
       this.resetForm();
@@ -146,6 +155,20 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       this.notification.showErro('Falha ao adicionar cliente. Entre em contato com o suporte para mais informações');
       console.log(error);
     });
+  }
+
+  validarAoSalvar() {
+    if(!this.cliente.id || this.cliente.id === 0) {
+      this.clienteService.listarPorCpf(this.cliente.documento.cpf).subscribe(res => {
+        if(!res) {
+          this.salvar();
+        } else {
+          this.notification.showAlerta('Já existe um Cliente cadastrado com esse CPF');
+        }
+      });
+    } else {
+      this.salvar();
+    }
   }
 
   resetForm() {
@@ -158,7 +181,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['cliente']) {
+    if (changes['cliente'] && !this.cliente.id && this.cliente.id <= 0) {
       this.cliente = new Cliente();
       this.emprestimo = new Emprestimo();
       this.displayEmprestimo = false;
@@ -297,26 +320,29 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     this.displayEmprestimo = false;
   }
 
-  obterDescricaoStatus(status: StatusEmprestimo): string {
-    switch (status) {
-      case 1:
-        return 'Pendente';
-      case 2:
-        return 'Aprovado';
-      case 3:
-        return 'Negado';
-      case 4:
-        return 'Quitado';
-      case 5:
-        return 'Em Atraso';
-      default:
-        return 'Outro';
+  obterDescricaoStatus(status: any): string {
+    if (status == 0 || status == 'PENDENTE' || status == StatusEmprestimo.PENDENTE) {
+      return 'Pendente';
+    } else if (status == 1 || status == 'APROVADO' || status == StatusEmprestimo.APROVADO) {
+      return 'Aprovado';
+    } else if (status == 2 || status == 'NEGADO' || status == StatusEmprestimo.NEGADO) {
+      return 'Negado';
+    } else if (status == 3 || status == 'QUITADO' || status == StatusEmprestimo.QUITADO) {
+      return 'Quitado';
+    } else if (status == 4 || status == 'EM_ATRASO' || status == StatusEmprestimo.EM_ATRASO) {
+      return 'Em Atraso';
+    } else {
+      return 'Outro';
     }
   }
 
   excluirEmprestimo(emp: Emprestimo, index: number) {
     if (emp.id > 0) {
-      //TODO: excluir do banco
+      this.clienteService.deletarEmprestimo(emp.id).subscribe(res => {
+        this.notification.showSucesso('Registro excluído com sucesso.');
+      });
+    } else {
+      this.notification.showSucesso('Registro excluído com sucesso.');
     }
 
     if (index > -1 && index < this.cliente.emprestimos.length) {
@@ -325,8 +351,6 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       this.notification.showErro('Falha ao excluir item da lista.')
       return ;
     }
-
-    this.notification.showSucesso('Registro excluído com sucesso.');
   }
 
 }
