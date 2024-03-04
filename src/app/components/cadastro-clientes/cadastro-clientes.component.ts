@@ -235,7 +235,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       this.emprestimo.parcelas.push(parcela);
       dataTermino = vencimentoAtual;
     }
-    debugger;
+    
     this.emprestimo.valorTotal = valorTotal;
     this.emprestimo.dataFinal = dataTermino;
     this.emprestimo.dataInicial = this.emprestimo.dataInicial;
@@ -400,7 +400,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       } else {
         status = 'Pago Parcial'
       }
-    } else if (parcela.dataVencimento < new Date()) {
+    } else if (this.convertToDate(parcela.dataVencimento) < new Date()) {
       status = 'Em Atraso'
     }
     parcela.statusParcela = status;

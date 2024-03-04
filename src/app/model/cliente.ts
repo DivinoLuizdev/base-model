@@ -15,6 +15,9 @@ export class Cliente {
   contato: Contato = new Contato();
   localTrabalho: Endereco = new Endereco();
   emprestimos: Emprestimo[] = [];
+  inadimplente: boolean = false;
 
+  //transient
+  statusEmprestimo: string;
   constructor() {}
 }

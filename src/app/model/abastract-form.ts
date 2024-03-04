@@ -13,7 +13,22 @@ export abstract class AbstractForm {
         return input && input.invalid && (input.touched || form.submitted);
     }
 
-    convertToDate(data: any) {
+    convertToDate(data: any): Date {
+        if(data.toString().includes('-')) {
+            return new Date(data.toString());
+        }
+
+        let dataString = data.toString();
+        let partesData = dataString.split('/');
+        let novaData = new Date(partesData[2], partesData[1] - 1, partesData[0]);
+        return novaData;
+    }
+
+    static convertToDate(data: any): Date {
+        if(data.toString().includes('-')) {
+            return new Date(data.toString());
+        }
+        
         let dataString = data.toString();
         let partesData = dataString.split('/');
         let novaData = new Date(partesData[2], partesData[1] - 1, partesData[0]);
