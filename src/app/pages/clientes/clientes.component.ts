@@ -14,6 +14,7 @@ export class ClientesComponent extends AbstractForm implements OnInit {
   clienteSelecionado = new Cliente();
   displayCadastro = false;
   isCrediario = false;
+  tituloPopup = 'Cadastro';
  
   constructor(private clienteService: ClienteService,
     private ms: MessageService) { 
@@ -56,12 +57,14 @@ export class ClientesComponent extends AbstractForm implements OnInit {
    showDialogCadastro() {
     this.clienteSelecionado = new Cliente();
     this.isCrediario = false;
+    this.tituloPopup = 'Cadastro Cliente';
     this.displayCadastro = true;
    }
 
    showDialogEdit(cliente: Cliente, isCrediario: boolean) {
     this.clienteSelecionado = cliente;
     this.isCrediario = isCrediario;
+    this.tituloPopup = isCrediario ? 'Gerenciar Crediário' : 'Editar Cliente';
     this.displayCadastro = true;
    }
 

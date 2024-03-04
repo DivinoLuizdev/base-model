@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Cliente } from '../model/cliente';
+import { Parcela } from '../model/parcela';
 
 @Injectable({
   providedIn: 'root'
@@ -35,4 +36,11 @@ export class ClienteService {
     return this.http.delete<void>(`${this.apiUrl}/api/emprestimo/${id}`);
   }
 
+  registrarPagamento(parcela: Parcela): Observable<string> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post<string>(`${this.apiUrl}/api/emprestimo/pagamento`,parcela, { 
+      headers : headers,
+      responseType: 'text' as 'json'
+    });
+  }
 }

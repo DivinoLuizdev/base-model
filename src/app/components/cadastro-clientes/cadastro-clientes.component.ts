@@ -10,6 +10,7 @@ import { AbstractForm } from 'src/app/model/abastract-form';
 import { Parcela } from 'src/app/model/parcela';
 import { MessageService } from 'primeng/api';
 import { StatusEmprestimo } from 'src/app/model/status-emprestimo';
+import { Pagamento } from 'src/app/model/pagamento';
 
 
 @Component({
@@ -21,10 +22,14 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   estadosCivis = Object.values(EstadoCivil);
   estados = Object.values(Estados);
   displayEmprestimo = false;
+  displayPagamento = false;
   listaStatus: StatusEmprestimo[] = [];
   listaParcelas: number[] = [];
   clonedParcelas: Parcela[] = [];
   editingIndex = -1;
+  displayNovoPagamento = false;
+  pagamento: Pagamento = new Pagamento();
+  parcelaPagamento: Parcela;
 
   @Input() cliente: Cliente;
   @Input() somenteCrediario: boolean
@@ -148,7 +153,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   salvar() {
-   this.clienteService.criarCliente(this.cliente).subscribe(res =>{
+    this.clienteService.criarCliente(this.cliente).subscribe(res => {
       this.notification.showSucesso('Dados Gravados com sucesso');
       this.saveEvent.emit(this.cliente);
       this.resetForm();
@@ -159,9 +164,9 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   validarAoSalvar() {
-    if(!this.cliente.id || this.cliente.id === 0) {
+    if (!this.cliente.id || this.cliente.id === 0) {
       this.clienteService.listarPorCpf(this.cliente.documento.cpf).subscribe(res => {
-        if(!res) {
+        if (!res) {
           this.salvar();
         } else {
           this.notification.showAlerta('Já existe um Cliente cadastrado com esse CPF');
@@ -209,7 +214,6 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     if (!this.validarNovoEmprestimo()) {
       return;
     }
-    debugger;
     let valorTotal = 0;
     let saldoDevedor = this.emprestimo.valor;
     let valorParcela = this.emprestimo.valor / this.emprestimo.numeroParcela;
@@ -229,11 +233,12 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       valorTotal += parcela.valorParcela + parcela.valorJuros;
 
       this.emprestimo.parcelas.push(parcela);
-      dataTermino = this.convertToDate(vencimentoAtual);
+      dataTermino = vencimentoAtual;
     }
+    debugger;
     this.emprestimo.valorTotal = valorTotal;
-    this.emprestimo.dataFinal = this.convertToDate(dataTermino);
-    this.emprestimo.dataInicial = this.convertToDate(this.emprestimo.dataInicial);
+    this.emprestimo.dataFinal = dataTermino;
+    this.emprestimo.dataInicial = this.emprestimo.dataInicial;
   }
 
   validarNovoEmprestimo(): boolean {
@@ -343,6 +348,18 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     }
   }
 
+  getSeverity(status: string) {
+    switch (status) {
+      case 'Pago':
+        return 'success';
+      case 'A Vencer' || 'Pago parcial':
+        return 'warning';
+      case 'Em Atraso':
+        return 'danger';
+    }
+    return '';
+  }
+
   excluirEmprestimo(emp: Emprestimo, index: number) {
     if (emp.id > 0) {
       this.clienteService.deletarEmprestimo(emp.id).subscribe(res => {
@@ -356,8 +373,85 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       this.cliente.emprestimos.splice(index, 1);
     } else {
       this.notification.showErro('Falha ao excluir item da lista.')
-      return ;
+      return;
     }
   }
 
+  showDialogPagamento(e: Emprestimo, index: number) {
+    this.emprestimo = e;
+    this.displayPagamento = true;
+    this.displayNovoPagamento = false;
+    this.calcularAReceber(null);
+    for (let p of e.parcelas) {
+      this.popularStatusPagamento(p);
+    }
+  }
+
+  popularStatusPagamento(parcela: Parcela) {
+    let status = 'A Vencer';
+
+    if (parcela.pagamentos && parcela.pagamentos.length > 0) {
+      let somaPagamento = 0;
+      for (const pg of parcela.pagamentos) {
+        somaPagamento += pg.valorPago;
+      }
+      if (somaPagamento === parcela.valorJuros + parcela.valorParcela) {
+        status = 'Pago';
+      } else {
+        status = 'Pago Parcial'
+      }
+    } else if (parcela.dataVencimento < new Date()) {
+      status = 'Em Atraso'
+    }
+    parcela.statusParcela = status;
+  }
+
+  calcularAReceber(p: Parcela): number {
+    if (!p) {
+      let receber = this.emprestimo.valorTotal;
+
+      for (let p of this.emprestimo.parcelas) {
+        if (p.pagamentos && p.pagamentos.length > 0) {
+          for (let pg of p.pagamentos) {
+            receber -= pg.valorPago;
+          }
+        }
+      }
+      this.emprestimo.valorAReceber = receber;
+      return null;
+    } else {
+      let receber = p.valorJuros + p.valorParcela;
+
+      for(let pg of p.pagamentos) {
+        receber -= pg.valorPago;
+      }
+      return receber;
+    }
+  }
+
+  showNovoPagamento(p: Parcela) {
+    this.pagamento = new Pagamento();
+    this.pagamento.dataPagamento = new Date();
+    this.parcelaPagamento = p;
+    this.displayNovoPagamento = true;
+  }
+
+  registrarPagamento() {
+    const areceber = this.calcularAReceber(this.parcelaPagamento);
+    if(this.pagamento.valorPago > areceber) {
+      this.notification.showAlerta('O valor pago ultrapassa o valor a receber.');
+      return ;
+    } 
+    if (!this.parcelaPagamento.pagamentos) {
+      this.parcelaPagamento.pagamentos = [];
+    }
+    this.parcelaPagamento.pagamentos.push(this.pagamento);
+    this.calcularAReceber(null);
+    this.popularStatusPagamento(this.parcelaPagamento);
+    this.clienteService.registrarPagamento(this.parcelaPagamento).subscribe(res => {
+      this.displayNovoPagamento = false;
+      this.notification.showSucesso('Pagamento registrado com sucesso.');
+    });
+
+  }
 }

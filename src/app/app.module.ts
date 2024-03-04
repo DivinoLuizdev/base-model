@@ -26,6 +26,7 @@ import { CurrencyMaskModule } from "ng2-currency-mask";
 import { CalendarModule } from 'primeng/calendar';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { TagModule } from 'primeng/tag';
 
 
 @NgModule({
@@ -58,7 +59,8 @@ import { MessageService } from 'primeng/api';
     DialogModule,
     CurrencyMaskModule,
     CalendarModule,
-    ToastModule
+    ToastModule,
+    TagModule
   ],
   exports: [],
 

@@ -14,4 +14,7 @@ export class Emprestimo {
     dataPagamentos: Pagamento[] = [];
     valorJuros: number;
     status: StatusEmprestimo = StatusEmprestimo.PENDENTE;
+
+    //transient
+    valorAReceber: number;
 }

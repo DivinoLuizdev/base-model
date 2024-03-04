@@ -6,5 +6,8 @@ export class Parcela {
     valorParcela: number;
     valorJuros: number;
     dataVencimento: any;
-    pagamento: Pagamento;
+    pagamentos: Pagamento[] = [];
+
+    //transient
+    statusParcela: string = 'A Vencer';
 }
