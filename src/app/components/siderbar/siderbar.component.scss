@@ -2,13 +2,20 @@
       justify-content: flex-start;
      
         li{
-            border: solid 1p rgb(230, 221, 221);
+            border: solid 1p rgb(0, 0, 0);
             
+        }
+
+        a{
+            color:rgb(0, 0, 0);
+            border-bottom: 1px solid transparent; /* Adiciona uma borda transparente aos links */
+            transition: border-color 0.3s ease; /* Adiciona uma transição suave para a mudança de cor da borda */
         }
     
   
     :hover {
-        color:lightseagreen;
+        color:rgb(0, 0, 0);
+        border-color: rgb(0, 0, 0); /* Muda a cor da borda para lightseagreen quando hover sobre o link */
     }
 }
 ul {
@@ -33,27 +40,21 @@ ul {
 .custom-width-icon {
     font-size: 1.5rem; /* ou qualquer outro tamanho desejado */
 
-  }
+}
 
 #menu li:hover {
     cursor: pointer; /* Altera o cursor do mouse para pointer quando hover */
     transition: transform 0.3s ease; /* Adiciona uma transição suave */
+    transform: translateX(10px); /* Move o item da lista para a direita quando hover */
 }
 
-#menu li:hover {
-    transform: translateX(5px); /* Move o item da lista para a direita quando hover */
-}
 
 
 /* CSS para animação do cursor */
 
-#menu li:hover,
-.list-unstyled li:hover {
+/* Estilo para hovers dos ícones */
+.icon:hover {
     cursor: pointer; /* Altera o cursor do mouse para pointer quando hover */
     transition: transform 0.3s ease; /* Adiciona uma transição suave */
-}
-
-#menu li:hover,
-.list-unstyled li:hover {
-    transform: translateX(5px); /* Move o item da lista para a direita quando hover */
+    transform: scale(1.2); /* Aumenta o ícone quando hover */
 }
