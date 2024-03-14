@@ -11,4 +11,5 @@ export class Parcela {
     //transient
     statusParcela: string = 'A Vencer';
     idEmprestimo: number;
+    isPagamentoJuros = false;
 }

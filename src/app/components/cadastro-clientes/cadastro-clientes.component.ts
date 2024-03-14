@@ -465,7 +465,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   processarPagamentoJuros(numParcela: number) {
     let vencimentoAtual = this.convertToDate(this.parcelaPagamento.dataVencimento);
     this.parcelaPagamento.dataVencimento = vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1);
-    this.parcelaPagamento.valorJuros = 0;
+    this.parcelaPagamento.isPagamentoJuros = true;
     this.parcelaPagamento.idEmprestimo = this.emprestimo.id;
     for(let parcela of this.emprestimo.parcelas) {
       if(parcela.numParcela > numParcela) {
