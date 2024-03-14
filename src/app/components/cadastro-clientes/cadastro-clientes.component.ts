@@ -45,7 +45,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   mostrarCamposConjuge: boolean = false;
 
   ngOnInit() {
-    this.listaParcelas = [1, 2, 4, 5, 10];
+    this.listaParcelas = [1, 2, 4, 5, 8, 10];
     this.listaStatus = [
       StatusEmprestimo.PENDENTE,
       StatusEmprestimo.APROVADO,
@@ -198,13 +198,13 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   novoEmprestimo() {
     this.editingIndex - 1;
     this.emprestimo = new Emprestimo();
-    this.listaParcelas = [1, 2, 4, 5, 10];
+    this.listaParcelas = [1, 2, 4, 5, 8,10];
     this.displayEmprestimo = true;
   }
 
   editarEmprestimo(emprestimo: Emprestimo, index: number) {
     this.editingIndex = index;
-    this.listaParcelas = [1, 2, 4, 5, 10];
+    this.listaParcelas = [1, 2, 4, 5, 8,10];
     emprestimo.dataInicial = this.convertDateToString(emprestimo.dataInicial);
     this.emprestimo = emprestimo;
     this.displayEmprestimo = true;
@@ -437,11 +437,19 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   registrarPagamento() {
+    if(!this.pagamento.valorPago || (this.pagamento.valorPago && this.pagamento.valorPago === 0)) {
+      this.notification.showAlerta('O campo Valor Pago é obrigatório');
+      return ;
+    }
     const areceber = this.calcularAReceber(this.parcelaPagamento);
     if(this.pagamento.valorPago > areceber) {
       this.notification.showAlerta('O valor pago ultrapassa o valor a receber.');
       return ;
-    } 
+    }
+    
+    if(this.parcelaPagamento.valorJuros === this.pagamento.valorPago) {
+      this.processarPagamentoJuros(this.parcelaPagamento.numParcela);
+    }
     if (!this.parcelaPagamento.pagamentos) {
       this.parcelaPagamento.pagamentos = [];
     }
@@ -453,5 +461,18 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       this.notification.showSucesso('Pagamento registrado com sucesso.');
     });
 
+  }
+  processarPagamentoJuros(numParcela: number) {
+    let vencimentoAtual = this.convertToDate(this.parcelaPagamento.dataVencimento);
+    this.parcelaPagamento.dataVencimento = vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1);
+    this.parcelaPagamento.valorJuros = 0;
+    this.parcelaPagamento.idEmprestimo = this.emprestimo.id;
+    for(let parcela of this.emprestimo.parcelas) {
+      if(parcela.numParcela > numParcela) {
+        vencimentoAtual =  this.convertToDate(parcela.dataVencimento);
+        parcela.dataVencimento = vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1);
+      }
+    }
+    this.emprestimo.dataFinal = vencimentoAtual;
   }
 }

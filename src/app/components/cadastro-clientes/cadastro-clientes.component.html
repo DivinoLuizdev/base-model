@@ -406,7 +406,7 @@
   </p-dialog>
 
   <!--Cadastrar Pagamento-->
-  <p-dialog header="Gerenciar Pagamento" [(visible)]="displayPagamento" [style]="{width: '60vw', minHeight: '40vw'}"
+  <p-dialog header="Gerenciar Pagamento" [(visible)]="displayPagamento" [style]="{minWidth: '70vw', minHeight: '40vw'}"
     [modal]="true" [draggable]="false" [resizable]="false">
     <div class="row">
       <fieldset name="Pagamento">
@@ -466,6 +466,8 @@
                         [(ngModel)]="pagamento.valorPago" title="Valor Pago" class="form-control"
                         [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
                     </div> <br/>
+                    <button style="margin: 2px;" type="button" class="btn btn-info" severity="success"
+                    (click)="displayNovoPagamento = false">Voltar</button>
                     <button style="margin: 2px;" type="button" class="btn btn-success" severity="success"
                     (click)="registrarPagamento()">Pagar</button>
                   </div>
