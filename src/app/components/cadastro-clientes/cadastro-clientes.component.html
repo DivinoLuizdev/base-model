@@ -278,10 +278,9 @@
           <div class="col-md-2">
             <div class="form-group">
               <label for="qtdeParcelas">Qtde Parcelas:</label>
-              <select id="qtdeParcelas" name="qtdeParcelas" class="form-control" style="height: calc(2.25rem + 14px);"
-                #qtdeParcelas="ngModel" ngModel [(ngModel)]="emprestimo.numeroParcela">
-                <option *ngFor="let p of listaParcelas" [value]="p">{{p}}x</option>
-              </select>
+              <input type="number" name="qtdeParcelas" maxLength="13" #qtdeParcelas="ngModel" ngModel
+                style="height: calc(2.25rem + 14px);" [(ngModel)]="emprestimo.numeroParcela" title="Quantidade de parcelas"
+                class="form-control"/>
               <div *ngIf="showError(qtdeParcelas, form)" class="text-danger">
                 <div>O Campo Quantidade Parcelas é obrigatório.</div>
               </div>

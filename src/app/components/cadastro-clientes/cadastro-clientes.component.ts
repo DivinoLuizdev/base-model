@@ -24,7 +24,6 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   displayEmprestimo = false;
   displayPagamento = false;
   listaStatus: StatusEmprestimo[] = [];
-  listaParcelas: number[] = [];
   clonedParcelas: Parcela[] = [];
   editingIndex = -1;
   displayNovoPagamento = false;
@@ -45,7 +44,6 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   mostrarCamposConjuge: boolean = false;
 
   ngOnInit() {
-    this.listaParcelas = [1, 2, 4, 5, 8, 10];
     this.listaStatus = [
       StatusEmprestimo.PENDENTE,
       StatusEmprestimo.APROVADO,
@@ -181,7 +179,6 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     this.cliente = new Cliente();
     this.emprestimo = new Emprestimo();
     this.displayEmprestimo = false;
-    this.listaParcelas = [];
     this.clonedParcelas = [];
     this.editingIndex = -1;
   }
@@ -198,13 +195,11 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   novoEmprestimo() {
     this.editingIndex - 1;
     this.emprestimo = new Emprestimo();
-    this.listaParcelas = [1, 2, 4, 5, 8,10];
     this.displayEmprestimo = true;
   }
 
   editarEmprestimo(emprestimo: Emprestimo, index: number) {
     this.editingIndex = index;
-    this.listaParcelas = [1, 2, 4, 5, 8,10];
     emprestimo.dataInicial = this.convertDateToString(emprestimo.dataInicial);
     this.emprestimo = emprestimo;
     this.displayEmprestimo = true;
