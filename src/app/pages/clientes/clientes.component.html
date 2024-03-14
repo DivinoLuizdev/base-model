@@ -27,11 +27,10 @@
             <tr>
                 <th>ID</th>
                 <th>Nome</th>
-                <th>Estado Civil</th>
-                <th>Nome do Cônjuge</th>
-                <th>Observação</th>
                 <th>CPF</th>
-                <th>Identidade</th>
+                <th>Telefone</th>
+                <th>Endereço</th>
+                <th>Observação</th>
                 <th>Ações</th>
                 
             </tr>
@@ -40,14 +39,12 @@
             <tr>
                 <td>{{ cliente.id }}</td>
                 <td>{{ cliente.nome }}</td>
-                <td>{{ cliente.estadoCivil }}</td>
-                <td>{{ cliente.nomeConjuge }}</td>
-                <td>{{ cliente.observacao }}</td>
                 <td>{{ cliente.documento.cpf }}</td>
-                <td>{{ cliente.documento.identidade}}</td>
-
-
-                
+                <td>{{ cliente.contato.telefone }}</td>
+                <td>{{ cliente.endereco.rua }}
+                    Bairro: {{cliente.endereco.bairro}} -
+                    {{cliente.endereco.cidade}} - {{cliente.endereco.estado}}</td>
+                <td>{{ cliente.observacao }}</td>
                 <td >
                     <button [disabled]="cliente.emprestimos.length > 0"  (click)="deletarCliente(cliente.id)" style="margin: 2px;" type="button" class="btn btn-danger"     
                      title="Excluir Cliente"><i class="pi pi-trash"></i></button>
