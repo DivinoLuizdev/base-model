@@ -1,46 +1,33 @@
 <form class="container mt-4" #form="ngForm" novalidate autocomplete="off">
-  <div class="row" *ngIf="!somenteCrediario">
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="nome">Nome:</label>
-        <input type="text" name="nome" id="nome" #nome="ngModel" ngModel class="form-control" required
-          autocomplete="off" [(ngModel)]="cliente.nome" placeholder="Digite aqui o Nome" title="Digite aqui o Nome">
-        <div class="text-danger" *ngIf="showError(nome, form)">
-          O campo Nome é obrigatório
+  <fieldset name="documento" *ngIf="!somenteCrediario">
+    <legend>Dados Pessoais</legend>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="nome">Nome:</label>
+          <input type="text" name="nome" id="nome" #nome="ngModel" ngModel class="form-control" required
+            autocomplete="off" [(ngModel)]="cliente.nome" placeholder="Digite aqui o Nome" title="Digite aqui o Nome">
+          <div class="text-danger" *ngIf="showError(nome, form)">
+            O campo Nome é obrigatório
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="cpf">CPF:</label>
+          <input type="text" [(ngModel)]="cliente.documento.cpf" name="inputCPF" id="inputCPF" mask="000.000.000-00"
+            title="Digite aqui o CPF" #inputCPF="ngModel" class="form-control" placeholder="Digite aqui o CPF" required
+            (change)="formatarCPF($event)" (keypress)="inputCPF.value.length < 11">
+
+          <small *ngIf="showError(inputCPF, form)" class="text-danger">
+            O campo CPF obrigatório.
+          </small>
+          <small *ngIf="!validarCPF()" class="text-danger">
+            Campo CPF inválido.
+          </small>
         </div>
       </div>
     </div>
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="estadoCivil">Estado Civil:</label>
-        <select id="estadoCivil" name="estadoCivil" class="form-control" (change)="onChangeEstadoCivil($event)"
-          #estadoCivil="ngModel" ngModel [(ngModel)]="cliente.estadoCivil">
-          <option *ngFor="let estadoCivil of estadosCivis" [value]="estadoCivil">{{ estadoCivil }}</option>
-        </select>
-        <div *ngIf="showError(estadoCivil, form)" class="text-danger">
-          <div>O Campo Estado Civil é obrigatório.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row" *ngIf="!somenteCrediario">
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="observacao">Observação:</label>
-        <textarea id="observacao" name="observacao" class="form-control" rows="3" #observacao="ngModel" ngModel
-          [(ngModel)]="cliente.observacao"></textarea>
-      </div>
-    </div>
-    <div class="col-md-6" *ngIf="mostrarCamposConjuge">
-      <div class="form-group">
-        <label for="nomeConjuge">Nome do Cônjuge:</label>
-        <input type="text" id="nomeConjuge" name="nomeConjuge" class="form-control" #nomeConjuge="ngModel" ngModel
-          [(ngModel)]="cliente.nomeConjuge">
-      </div>
-    </div>
-  </div>
-  <fieldset name="contato" *ngIf="!somenteCrediario">
-    <legend>Contato</legend>
     <div class="row">
       <div class="col-md-4">
         <div class="form-group">
@@ -65,6 +52,34 @@
           </div>
         </div>
       </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="estadoCivil">Estado Civil:</label>
+          <select id="estadoCivil" name="estadoCivil" class="form-control" (change)="onChangeEstadoCivil($event)"
+            #estadoCivil="ngModel" ngModel [(ngModel)]="cliente.estadoCivil">
+            <option *ngFor="let estadoCivil of estadosCivis" [value]="estadoCivil">{{ estadoCivil }}</option>
+          </select>
+          <div *ngIf="showError(estadoCivil, form)" class="text-danger">
+            <div>O Campo Estado Civil é obrigatório.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="identidade">Identidade:</label>
+          <input type="text" id="identidade" name="identidade" class="form-control" #identidade="ngModel" ngModel
+            [(ngModel)]="cliente.documento.identidade">
+        </div>
+      </div>
+      <div class="col-md-4" *ngIf="mostrarCamposConjuge">
+        <div class="form-group">
+          <label for="nomeConjuge">Nome do Cônjuge:</label>
+          <input type="text" id="nomeConjuge" name="nomeConjuge" class="form-control" #nomeConjuge="ngModel" ngModel
+            [(ngModel)]="cliente.nomeConjuge">
+        </div>
+      </div>
       <div class="col-md-4" *ngIf="mostrarCamposConjuge">
         <div class="form-group">
           <label for="telefoneConjuge">Telefone do Cônjuge:</label>
@@ -77,30 +92,12 @@
         </div>
       </div>
     </div>
-  </fieldset>
-  <fieldset name="documento" *ngIf="!somenteCrediario">
-    <legend>Documento</legend>
-    <div class="row">
-      <div class="col-md-6">
+    <div class="row" *ngIf="!somenteCrediario">
+      <div class="col-md-12">
         <div class="form-group">
-          <label for="identidade">Identidade:</label>
-          <input type="text" id="identidade" name="identidade" class="form-control" #identidade="ngModel" ngModel
-            [(ngModel)]="cliente.documento.identidade">
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="cpf">CPF:</label>
-          <input type="text" [(ngModel)]="cliente.documento.cpf" name="inputCPF" id="inputCPF" mask="000.000.000-00"
-            title="Digite aqui o CPF" #inputCPF="ngModel" class="form-control" placeholder="Digite aqui o CPF" required
-            (change)="formatarCPF($event)" (keypress)="inputCPF.value.length < 11">
-
-          <small *ngIf="showError(inputCPF, form)" class="text-danger">
-            O campo CPF obrigatório.
-          </small>
-          <small *ngIf="!validarCPF()" class="text-danger">
-            Campo CPF inválido.
-          </small>
+          <label for="observacao">Observação:</label>
+          <textarea id="observacao" name="observacao" class="form-control" rows="3" #observacao="ngModel" ngModel
+            [(ngModel)]="cliente.observacao"></textarea>
         </div>
       </div>
     </div>
@@ -279,8 +276,8 @@
             <div class="form-group">
               <label for="qtdeParcelas">Qtde Parcelas:</label>
               <input type="number" name="qtdeParcelas" maxLength="13" #qtdeParcelas="ngModel" ngModel
-                style="height: calc(2.25rem + 14px);" [(ngModel)]="emprestimo.numeroParcela" title="Quantidade de parcelas"
-                class="form-control"/>
+                style="height: calc(2.25rem + 14px);" [(ngModel)]="emprestimo.numeroParcela"
+                title="Quantidade de parcelas" class="form-control" />
               <div *ngIf="showError(qtdeParcelas, form)" class="text-danger">
                 <div>O Campo Quantidade Parcelas é obrigatório.</div>
               </div>
@@ -434,44 +431,45 @@
         <div class="row" style="padding-top: 20px;" *ngIf="emprestimo.parcelas.length > 0">
           <span *ngIf="displayNovoPagamento">
             <div class="row">
-                <div class="col-md-3">
-                  <p>
-                    <strong>Nº Parcela: </strong><br /> {{parcelaPagamento.numParcela}}
-                  </p>
+              <div class="col-md-3">
+                <p>
+                  <strong>Nº Parcela: </strong><br /> {{parcelaPagamento.numParcela}}
+                </p>
+              </div>
+              <div class="col-md-3">
+                <p>
+                  <strong>Valor Parcela: </strong><br /> {{parcelaPagamento.valorParcela | currency: 'BRL'}}
+                </p>
+              </div>
+              <div class="col-md-3">
+                <p>
+                  <strong>Valor Juros: </strong><br /> {{parcelaPagamento.valorJuros | currency: 'BRL'}}
+                </p>
+              </div>
+              <div class="col-md-3">
+                <p>
+                  <strong>Valor Total: </strong><br /> {{parcelaPagamento.valorParcela + parcelaPagamento.valorJuros |
+                  currency: 'BRL'}}
+                </p>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <strong>Saldo Devedor: </strong><br />{{calcularAReceber(parcelaPagamento) | currency: 'BRL'}}
                 </div>
-                <div class="col-md-3">
-                  <p>
-                    <strong>Valor Parcela: </strong><br /> {{parcelaPagamento.valorParcela | currency: 'BRL'}}
-                  </p>
-                </div>
-                <div class="col-md-3">
-                  <p>
-                    <strong>Valor Juros: </strong><br /> {{parcelaPagamento.valorJuros | currency: 'BRL'}}
-                  </p>
-                </div>
-                <div class="col-md-3">
-                  <p>
-                    <strong>Valor Total: </strong><br /> {{parcelaPagamento.valorParcela + parcelaPagamento.valorJuros | currency: 'BRL'}}
-                  </p>
-                </div>
-                <div class="row">
-                  <div class="col-md-4">
-                    <strong>Saldo Devedor: </strong><br/>{{calcularAReceber(parcelaPagamento) | currency: 'BRL'}}
-                  </div>
-                  <div class="col-md-4" style="padding-top: 25px;">
-                    <div class="form-group">
-                      <label for="valorPago">Valor Pago:</label>
-                      <input currencyMask name="valorPago" maxLength="13" #valorPago="ngModel" ngModel
-                        [(ngModel)]="pagamento.valorPago" title="Valor Pago" class="form-control"
-                        [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
-                    </div> <br/>
-                    <button style="margin: 2px;" type="button" class="btn btn-info" severity="success"
+                <div class="col-md-4" style="padding-top: 25px;">
+                  <div class="form-group">
+                    <label for="valorPago">Valor Pago:</label>
+                    <input currencyMask name="valorPago" maxLength="13" #valorPago="ngModel" ngModel
+                      [(ngModel)]="pagamento.valorPago" title="Valor Pago" class="form-control"
+                      [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
+                  </div> <br />
+                  <button style="margin: 2px;" type="button" class="btn btn-info" severity="success"
                     (click)="displayNovoPagamento = false">Voltar</button>
-                    <button style="margin: 2px;" type="button" class="btn btn-success" severity="success"
+                  <button style="margin: 2px;" type="button" class="btn btn-success" severity="success"
                     (click)="registrarPagamento()">Pagar</button>
-                  </div>
-              
                 </div>
+
+              </div>
 
             </div>
           </span>
@@ -534,9 +532,10 @@
               </ng-template>
               <ng-template pTemplate="footer">
                 <tr>
-                  <td colspan="3" class="text-center"><strong>Saldo Devedor: {{calcularAReceber(p) | currency: 'BRL'}}</strong></td>
+                  <td colspan="3" class="text-center"><strong>Saldo Devedor: {{calcularAReceber(p) | currency:
+                      'BRL'}}</strong></td>
                 </tr>
-                
+
               </ng-template>
               <ng-template pTemplate="emptymessage">
                 <tr>
@@ -544,12 +543,12 @@
                 </tr>
               </ng-template>
             </p-table>
-          </div>
-          </td>
-          </tr>
-          </ng-template>
-          </p-table>
-          </span>
+        </div>
+        </td>
+        </tr>
+        </ng-template>
+        </p-table>
+        </span>
     </div>
     </fieldset>
     </div>

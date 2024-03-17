@@ -27,6 +27,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
+import { FluxoCaixaComponent } from './pages/fluxo-caixa/fluxo-caixa.component';
 
 
 @NgModule({
@@ -39,6 +40,7 @@ import { TagModule } from 'primeng/tag';
     ClientesComponent,
     EmprestimosComponent,
     CadastroClientesComponent,
+    FluxoCaixaComponent,
   ],
   imports: [
     

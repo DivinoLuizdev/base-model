@@ -1,0 +1,102 @@
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Fluxo de Caixa</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Fluxo de Caixa</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <h2>{{ mes }}/{{hoje | date: 'yyyy'}}</h2>
+        <div class="row">
+            <div class="col-lg-3 col-6">
+
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{estatistica.totalRecebido | currency: 'BRL'}}</h3>
+                        <p>Total de Recebidos</p>
+                    </div>
+                    <div class="icon">
+                        <i class="pi pi-angle-double-up"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>{{estatistica.totalSaida | currency: 'BRL'}}</h3>
+                        <p>Total de Saída</p>
+                    </div>
+                    <div class="icon">
+                        <i class="pi pi-angle-double-down"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{estatistica.saldo | currency: 'BRL'}}</h3>
+                        <p>Saldo em Caixa</p>
+                    </div>
+                    <div class="icon">
+                        <i class="pi pi-dollar"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{estatistica.totalAReceber | currency: 'BRL'}}</h3>
+                        <p>Total a Receber</p>
+                    </div>
+                    <div class="icon">
+                        <i class="pi pi-clock"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="full-height">
+    <div class="container mt-5">
+        <h2>Histórico de {{hoje | date: 'yyyy'}}</h2>
+        <div class="card m-2" style="padding-top: 10px;">
+            <p-table [value]="historico" [paginator]="true" [rows]="10" [showCurrentPageReport]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Mês</th>
+                        <th>Total Recebido</th>
+                        <th>Total Saída</th>
+                        <th>Saldo</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-h>
+                    <tr>
+                        <td>{{ getMesExtenso(h.mes) }}</td>
+                        <td>{{ h.totalRecebido | currency: 'BRL' }}</td>
+                        <td>{{ h.totalSaida | currency: 'BRL' }}</td>
+                        <td>{{ h.saldo | currency: 'BRL' }}</td> 
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div> 
+    </div>
+</div>
