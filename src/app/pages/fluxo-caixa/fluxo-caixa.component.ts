@@ -33,23 +33,4 @@ export class FluxoCaixaComponent extends AbstractForm implements OnInit {
       this.historico = res;
     });
   }
-
-  getMesExtenso(mes: number) {
-    const meses: string[] = [
-      "Janeiro",
-      "Fevereiro",
-      "Março",
-      "Abril",
-      "Maio",
-      "Junho",
-      "Julho",
-      "Agosto",
-      "Setembro",
-      "Outubro",
-      "Novembro",
-      "Dezembro",
-    ];
-    return meses[mes - 1]
-  }
-
 }

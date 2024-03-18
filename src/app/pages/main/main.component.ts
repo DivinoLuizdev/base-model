@@ -1,84 +1,122 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, NgModule } from '@angular/core';
+import { MessageService } from 'primeng/api';
+import { AbstractForm } from 'src/app/model/abastract-form';
+import { EstatisticaDTO } from 'src/app/model/estatistica.dto';
+import { EstatisticaService } from 'src/app/service/estatistica.service';
 
 
 
 @Component({
-  selector: 'app-main',
-  templateUrl: './main.component.html',
-  styleUrls: ['./main.component.scss']
+    selector: 'app-main',
+    templateUrl: './main.component.html',
+    styleUrls: ['./main.component.scss']
 })
 
 //LOGICA PARA EXIBIR O GRAFICO 'AreaChart' do AdminLTE 
 
-export class MainComponent implements OnInit {
-  data: any;
+export class MainComponent extends AbstractForm implements OnInit {
+    data: any;
+    options: any;
+    card: EstatisticaDTO = new EstatisticaDTO();
+    hoje: Date = new Date();
+    constructor(private estatisticaService: EstatisticaService,
+        private msg: MessageService) {
+            super(msg);
+    }
 
-  options: any;
+    ngOnInit() {
+        this.carregarCards();
+        let historico: EstatisticaDTO[] = [];
+        this.estatisticaService.obterHistoricoEstatistica().subscribe(res => {
+            historico = res;
+            this.estatisticaService.obterEstatisticaDoMes().subscribe(res => {
+                historico.push(res);
+                this.preencherGrafico(historico);
+            });
+        });
+    }
 
-  ngOnInit() {
-      const documentStyle = getComputedStyle(document.documentElement);
-      const textColor = documentStyle.getPropertyValue('--text-color');
-      const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-      const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-      
-      this.data = {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-          datasets: [
-              {
-                  label: 'First Dataset',
-                  data: [65, 59, 80, 81, 56, 55, 40],
-                  fill: false,
-                  tension: 0.4,
-                  borderColor: documentStyle.getPropertyValue('--blue-500')
-              },
-              {
-                  label: 'Second Dataset',
-                  data: [28, 48, 40, 19, 86, 27, 90],
-                  fill: false,
-                //   borderDash: [5, 5],
-                  tension: 0.4,
-                //   borderColor: documentStyle.getPropertyValue('--teal-500'),
-                  backgroundColor: 'rgb(33, 146, 193)'
-              },
-              {
-                  label: 'Third Dataset',
-                  data: [12, 51, 62, 33, 21, 62, 45],
-                  fill: true,
-                //   borderColor: documentStyle.getPropertyValue('#D0D4DE'),
-                  tension: 0.4,
-                  backgroundColor: '#D1D5DE80'
-              }
-          ]
-      };
-      
-      this.options = {
-          maintainAspectRatio: false,
-          aspectRatio: 0.6,
-          plugins: {
-              legend: {
-                  labels: {
-                      color: textColor
-                  }
-              }
-          },
-          scales: {
-              x: {
-                  ticks: {
-                      color: textColorSecondary
-                  },
-                  grid: {
-                      color: surfaceBorder
-                  }
-              },
-              y: {
-                  ticks: {
-                      color: textColorSecondary
-                  },
-                  grid: {
-                      color: surfaceBorder
-                  }
-              }
-          }
-      };
-  }
+    carregarCards() {
+        this.estatisticaService.obterEstatisticaHome().subscribe(res => {
+            this.card = res;
+        });
+    }
+
+    preencherGrafico(historico: EstatisticaDTO[]) {
+        const documentStyle = getComputedStyle(document.documentElement);
+        const textColor = documentStyle.getPropertyValue('--text-color');
+        const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
+        const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
+        debugger;
+        let meses = [];
+        let totalRecebido = [];
+        let totalSaida = [];
+        let saldo = [];
+        for(const h of historico) {
+            meses.push(this.getMesExtenso(h.mes));
+            totalRecebido.push(h.totalRecebido);
+            totalSaida.push(h.totalSaida);
+            saldo.push(h.saldo);
+        }
+
+        this.data = {
+            labels: meses,
+            datasets: [
+                {
+                    label: 'Total Recebido',
+                    data: totalRecebido,
+                    fill: false,
+                    tension: 0.4,
+                    borderColor: documentStyle.getPropertyValue('--blue-500')
+                },
+                {
+                    label: 'Total Saída',
+                    data: totalSaida,
+                    fill: false,
+                    //   borderDash: [5, 5],
+                    tension: 0.4,
+                    //   borderColor: documentStyle.getPropertyValue('--teal-500'),
+                    backgroundColor: 'rgb(33, 146, 193)'
+                },
+                {
+                    label: 'Saldo',
+                    data: saldo,
+                    fill: false,
+                    //   borderColor: documentStyle.getPropertyValue('#D0D4DE'),
+                    tension: 0.4,
+                    backgroundColor: '#D1D5DE80'
+                }
+            ]
+        };
+
+        this.options = {
+            maintainAspectRatio: false,
+            aspectRatio: 0.6,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                }
+            }
+        };
+    }
 }

@@ -18,4 +18,8 @@ export class EstatisticaService {
   obterHistoricoEstatistica(): Observable<EstatisticaDTO[]> {
     return this.http.get<EstatisticaDTO[]>(`${this.apiUrl}/api/estatistica/historico`);
   }
+
+  obterEstatisticaHome(): Observable<EstatisticaDTO> {
+    return this.http.get<EstatisticaDTO>(`${this.apiUrl}/api/estatistica/estatistica`);
+  }
 }
