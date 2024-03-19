@@ -22,7 +22,7 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
   displayPagamento = false;
 
   pesquisaStatus = '';
-  listaStatus: string[] = ['', 'A Vencer', 'Pago', 'Pago Parcial', 'Em Atraso', 'Inadimplente'];
+  listaStatus: string[] = ['', 'A Vencer', 'Pago', 'Pago Parcial', 'Em Atraso', 'Inadimplente', 'Concluído'];
   pesquisaDataIni: Date;
   pesquisaDataFim: Date;
   constructor(
@@ -53,6 +53,10 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
       case 'Em Atraso':
       case 'Inadimplente':
         return 'bg-danger'
+    }
+
+    if(status.indexOf('Inadimplente ') !== -1) {
+      return 'bg-danger';
     }
     return 'bg-info'
   }
@@ -167,8 +171,18 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
 
   filtrar() {
     const hoje = new Date();
-    let dataIni = this.pesquisaDataIni ? this.pesquisaDataIni : new Date('1900-01-01');
-    let dataFim = this.pesquisaDataFim ? this.pesquisaDataFim : hoje.setFullYear(hoje.getFullYear() + 5);
+    let datasIguais = false;
+    if(this.pesquisaDataIni === this.pesquisaDataFim) {
+      datasIguais = true;
+    }
+
+    let dataIni = this.convertToDate(this.pesquisaDataIni ? this.pesquisaDataIni : new Date('1900-01-01'));
+    let dataFim = this.convertToDate(this.pesquisaDataFim ? this.pesquisaDataFim : hoje.setFullYear(hoje.getFullYear() + 5));
+
+    if(datasIguais) {
+      dataIni.setDate(dataIni.getDate() - 1);
+      dataFim.setDate(dataFim.getDate() + 1);
+    }
 
     let lista: EmprestimoDTO[] = [];
     if (this.pesquisaStatus === 'Pago' || this.pesquisaStatus === 'Pago Parcial') {
@@ -178,13 +192,14 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
             this.convertToDate(pg.dataPagamento) >= dataIni && this.convertToDate(pg.dataPagamento) <= dataFim)));
     } else if (this.pesquisaStatus === 'A Vencer') {
       lista = this.emprestimos.filter(e =>
-        this.convertToDate(e.proximoPgto) >= dataIni && this.convertToDate(e.proximoPgto) <= dataFim
+         e.proximoPgto !== null && this.convertToDate(e.proximoPgto) >= dataIni
+           && this.convertToDate(e.proximoPgto) <= dataFim
         && e.status === this.pesquisaStatus);
     } else if(this.pesquisaStatus === '') {
       lista = this.emprestimos;
     } else {
       lista = this.emprestimos.filter(e =>
-        e.status === this.pesquisaStatus);
+        e.status.indexOf(this.pesquisaStatus) !== -1);
     }
     this.emprestimos = lista;
   }
