@@ -6,6 +6,7 @@ import { Emprestimo, EmprestimoDTO } from 'src/app/model/emprestimo';
 import { Parcela } from 'src/app/model/parcela';
 import { StatusEmprestimo } from 'src/app/model/status-emprestimo';
 import { ClienteService } from 'src/app/service/cliente.service';
+import { EstatisticaService } from 'src/app/service/estatistica.service';
 
 
 
@@ -27,12 +28,20 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
   pesquisaDataFim: Date;
   constructor(
     private clienteService: ClienteService,
-    private mg: MessageService) {
+    private mg: MessageService,
+    private estatisticaService: EstatisticaService) {
     super(mg);
   }
 
   ngOnInit(): void {
-    this.listarEmprestimos();
+    this.estatisticaService.sistemaValido().subscribe(res => {
+      if (res) {
+        this.listarEmprestimos();
+      } else {
+        this.notification.showSistemaVencido();
+      }
+    });
+
   }
 
   popularEmprestimos(cliente: Cliente) {
@@ -55,7 +64,7 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
         return 'bg-danger'
     }
 
-    if(status.indexOf('Inadimplente ') !== -1) {
+    if (status.indexOf('Inadimplente ') !== -1) {
       return 'bg-danger';
     }
     return 'bg-info'
@@ -119,9 +128,9 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
     this.emprestimo = e.emprestimo;
     this.cliente = e.clienteEmprestimo;
     this.calcularAReceber(null);
-    if(e.clienteEmprestimo.inadimplente) {
+    if (e.clienteEmprestimo.inadimplente) {
       e.status = 'Inadimplente';
-    } 
+    }
     for (let p of this.emprestimo.parcelas) {
       this.popularStatusPagamento(p);
     }
@@ -172,14 +181,14 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
   filtrar() {
     const hoje = new Date();
     let datasIguais = false;
-    if(this.pesquisaDataIni === this.pesquisaDataFim) {
+    if (this.pesquisaDataIni === this.pesquisaDataFim) {
       datasIguais = true;
     }
 
     let dataIni = this.convertToDate(this.pesquisaDataIni ? this.pesquisaDataIni : new Date('1900-01-01'));
     let dataFim = this.convertToDate(this.pesquisaDataFim ? this.pesquisaDataFim : hoje.setFullYear(hoje.getFullYear() + 5));
 
-    if(datasIguais) {
+    if (datasIguais) {
       dataIni.setDate(dataIni.getDate() - 1);
       dataFim.setDate(dataFim.getDate() + 1);
     }
@@ -192,10 +201,10 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
             this.convertToDate(pg.dataPagamento) >= dataIni && this.convertToDate(pg.dataPagamento) <= dataFim)));
     } else if (this.pesquisaStatus === 'A Vencer') {
       lista = this.emprestimos.filter(e =>
-         e.proximoPgto !== null && this.convertToDate(e.proximoPgto) >= dataIni
-           && this.convertToDate(e.proximoPgto) <= dataFim
+        e.proximoPgto !== null && this.convertToDate(e.proximoPgto) >= dataIni
+        && this.convertToDate(e.proximoPgto) <= dataFim
         && e.status === this.pesquisaStatus);
-    } else if(this.pesquisaStatus === '') {
+    } else if (this.pesquisaStatus === '') {
       lista = this.emprestimos;
     } else {
       lista = this.emprestimos.filter(e =>

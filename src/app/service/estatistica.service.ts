@@ -22,4 +22,8 @@ export class EstatisticaService {
   obterEstatisticaHome(): Observable<EstatisticaDTO> {
     return this.http.get<EstatisticaDTO>(`${this.apiUrl}/api/estatistica/estatistica`);
   }
+
+  sistemaValido(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/api/estatistica/validar-sistema`);
+  }
 }

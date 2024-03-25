@@ -3,6 +3,7 @@ import { MessageService } from 'primeng/api';
 import { AbstractForm } from 'src/app/model/abastract-form';
 import { Cliente } from 'src/app/model/cliente';
 import { ClienteService } from 'src/app/service/cliente.service';
+import { EstatisticaService } from 'src/app/service/estatistica.service';
 
 @Component({
   selector: 'app-clientes',
@@ -15,25 +16,32 @@ export class ClientesComponent extends AbstractForm implements OnInit {
   displayCadastro = false;
   isCrediario = false;
   tituloPopup = 'Cadastro';
- 
+
   constructor(private clienteService: ClienteService,
-    private ms: MessageService) { 
-      super(ms);
-    }
+    private ms: MessageService,
+    private estatisticaService: EstatisticaService) {
+    super(ms);
+  }
 
   ngOnInit(): void {
-    this.carregarClientes();
+    this.estatisticaService.sistemaValido().subscribe(res => {
+      if (res) {
+        this.carregarClientes();
+      } else {
+        this.notification.showSistemaVencido();
+      }
+    });
   }
 
   filtrarPorNome(filtro: string) {
     this.clienteService.listaClientes().subscribe(res => {
-      if(res && res.length > 0) {
+      if (res && res.length > 0) {
         console.log(res, filtro);
         this.clientes = res.filter(cliente => cliente.nome.toLowerCase().includes(filtro.toLowerCase()));
       }
     }, error => {
       this.notification.showErro('Erro ao carregar lista de clientes');
-    }); 
+    });
   }
 
   carregarClientes() {
@@ -52,24 +60,24 @@ export class ClientesComponent extends AbstractForm implements OnInit {
     } catch (error) {
       this.notification.showErro(`Erro ao excluir cliente ${id}: ${error}`);
     }
-   }
+  }
 
-   showDialogCadastro() {
+  showDialogCadastro() {
     this.clienteSelecionado = new Cliente();
     this.isCrediario = false;
     this.tituloPopup = 'Cadastro Cliente';
     this.displayCadastro = true;
-   }
+  }
 
-   showDialogEdit(cliente: Cliente, isCrediario: boolean) {
+  showDialogEdit(cliente: Cliente, isCrediario: boolean) {
     this.clienteSelecionado = cliente;
     this.isCrediario = isCrediario;
     this.tituloPopup = isCrediario ? 'Gerenciar Crediário' : 'Editar Cliente';
     this.displayCadastro = true;
-   }
+  }
 
-   afterSave(cliente: Cliente) {
+  afterSave(cliente: Cliente) {
     this.carregarClientes();
     this.displayCadastro = false;
-   }
+  }
 }

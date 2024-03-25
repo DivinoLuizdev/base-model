@@ -25,6 +25,17 @@ export class MainComponent extends AbstractForm implements OnInit {
     }
 
     ngOnInit() {
+        this.estatisticaService.sistemaValido().subscribe(res => {
+            if(res) {
+                this.inicializarSistema();
+            } else {
+                this.notification.showSistemaVencido();
+            }
+        });
+        
+    }
+
+    inicializarSistema() {
         this.carregarCards();
         let historico: EstatisticaDTO[] = [];
         this.estatisticaService.obterHistoricoEstatistica().subscribe(res => {

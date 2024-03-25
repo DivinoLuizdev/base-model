@@ -34,4 +34,8 @@ export class MensagemAlerta {
         this.show(TipoMensagem.INFO, titulo, mensagem);
     }
 
+    showSistemaVencido() {
+        this.showErro("Atenção, o período de teste do UnderControl chegou ao fim, por favor, entre em contato com os desenvolvedores para resolver este problema");
+    }
+
 }
