@@ -103,4 +103,8 @@ export abstract class AbstractForm {
         ];
         return meses[mes - 1]
     }
+
+    getDefaultNumber(param: number) {
+        return param ? param : 0;
+    }
 }

@@ -31,16 +31,6 @@ export class FluxoCaixaComponent extends AbstractForm implements OnInit {
   }
 
   inicializarSistema() {
-    this.hoje = new Date();
-    this.mes = this.hoje.toLocaleDateString('pt-BR', { month: 'long' });
-    this.mes = this.mes.charAt(0).toUpperCase() + this.mes.slice(1);
-
-    this.estatisticaService.obterEstatisticaDoMes().subscribe(res => {
-      this.estatistica = res;
-    });
-
-    this.estatisticaService.obterHistoricoEstatistica().subscribe(res => {
-      this.historico = res;
-    });
+    
   }
 }

@@ -17,39 +17,41 @@ import { EstatisticaService } from 'src/app/service/estatistica.service';
 export class MainComponent extends AbstractForm implements OnInit {
     data: any;
     options: any;
-    card: EstatisticaDTO = new EstatisticaDTO();
-    hoje: Date = new Date();
+    hoje: Date;
+    mes: string;
+    estatistica: EstatisticaDTO;
+    historico: EstatisticaDTO[] = [];
     constructor(private estatisticaService: EstatisticaService,
         private msg: MessageService) {
-            super(msg);
+        super(msg);
     }
 
     ngOnInit() {
         this.estatisticaService.sistemaValido().subscribe(res => {
-            if(res) {
+            if (res) {
                 this.inicializarSistema();
             } else {
                 this.notification.showSistemaVencido();
             }
         });
-        
+
     }
 
     inicializarSistema() {
-        this.carregarCards();
+        this.hoje = new Date();
+        this.mes = this.hoje.toLocaleDateString('pt-BR', { month: 'long' });
+        this.mes = this.mes.charAt(0).toUpperCase() + this.mes.slice(1);
+
         let historico: EstatisticaDTO[] = [];
         this.estatisticaService.obterHistoricoEstatistica().subscribe(res => {
             historico = res;
-            this.estatisticaService.obterEstatisticaDoMes().subscribe(res => {
-                historico.push(res);
+            this.estatisticaService.obterEstatistica().subscribe(estatistica => {
+                this.estatistica = estatistica;
+                this.estatistica.receberMes = this.getDefaultNumber(this.estatistica.receberMes);
+                this.estatistica.receberGeral = this.getDefaultNumber(this.estatistica.receberGeral);
+                historico.push(estatistica);
                 this.preencherGrafico(historico);
             });
-        });
-    }
-
-    carregarCards() {
-        this.estatisticaService.obterEstatisticaHome().subscribe(res => {
-            this.card = res;
         });
     }
 
@@ -63,7 +65,7 @@ export class MainComponent extends AbstractForm implements OnInit {
         let totalRecebido = [];
         let totalSaida = [];
         let saldo = [];
-        for(const h of historico) {
+        for (const h of historico) {
             meses.push(this.getMesExtenso(h.mes));
             totalRecebido.push(h.totalRecebido);
             totalSaida.push(h.totalSaida);

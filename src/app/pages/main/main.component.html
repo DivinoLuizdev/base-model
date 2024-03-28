@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0">Dashboard</h1>
+        <!-- <h1 class="m-0">Dashboard</h1> -->
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -14,48 +14,19 @@
   </div>
 </div>
 
-
 <section class="content">
   <div class="container-fluid">
-
+    <h2>Relatório Geral de {{ mes }}/{{hoje | date: 'yyyy'}}</h2>
     <div class="row">
-      <div class="col-lg-3 col-6">
-
-        <div class="small-box bg-info">
-          <div class="inner">
-            <h3>{{card.qtdeClientes}}</h3>
-            <p>Clientes cadastrados</p>
-          </div>
-          <div class="icon">
-            <i class="pi pi-shopping-bag"></i>
-          </div>
-          <a routerLink="/clientes" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
-        </div>
-      </div>
-
       <div class="col-lg-3 col-6">
 
         <div class="small-box bg-success">
           <div class="inner">
-            <h3>{{card.qtdeEmprestimosAtivos}}</h3>
-            <p>Crediários Ativos</p>
+            <h3>{{estatistica.totalRecebido | currency: 'BRL'}}</h3>
+            <p>Total de Recebidos</p>
           </div>
           <div class="icon">
-            <i class="pi pi-dollar"></i>
-          </div>
-          <a routerLink="/emprestimos" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-6">
-
-        <div class="small-box bg-warning">
-          <div class="inner">
-            <h3>{{card.qtdeInadimplentes}}</h3>
-            <p>Clientes Inadimplentes</p>
-          </div>
-          <div class="icon">
-            <i class="pi pi-user-plus"></i>
+            <i class="pi pi-angle-double-up"></i>
           </div>
           <a routerLink="/emprestimos" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
         </div>
@@ -65,7 +36,93 @@
 
         <div class="small-box bg-danger">
           <div class="inner">
-            <h3>{{card.totalAReceber | currency: 'BRL'}}</h3>
+            <h3>{{estatistica.totalSaida | currency: 'BRL'}}</h3>
+            <p>Total de Saída</p>
+          </div>
+          <div class="icon">
+            <i class="pi pi-angle-double-down"></i>
+          </div>
+          <a routerLink="/emprestimos" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+
+        <div class="small-box bg-info">
+          <div class="inner">
+            <h3>{{estatistica.saldo | currency: 'BRL'}}</h3>
+            <p>Saldo em Caixa</p>
+          </div>
+          <div class="icon">
+            <i class="pi pi-dollar"></i>
+          </div>
+          <a routerLink="/emprestimos" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>{{estatistica.receberGeral | currency: 'BRL'}}</h3>
+            <p>Total a Receber</p>
+          </div>
+          <div class="icon">
+            <i class="pi pi-clock"></i>
+          </div>
+          <a routerLink="/emprestimos" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-lg-3 col-6">
+
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>{{estatistica.qtdeEmprestimosAtivos}}</h3>
+            <p>Crediários Ativos</p>
+          </div>
+          <div class="icon">
+            <i class="pi pi-dollar"></i>
+          </div>
+          <a routerLink="/emprestimos" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+
+        <div class="small-box bg-danger">
+          <div class="inner">
+            <h3>{{estatistica.qtdeInadimplentes}}</h3>
+            <p>Clientes Inadimplentes</p>
+          </div>
+          <div class="icon">
+            <i class="pi pi-user-plus"></i>
+          </div>
+          <a routerLink="/emprestimos" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+
+        <div class="small-box bg-info">
+          <div class="inner">
+            <h3>{{estatistica.qtdeClientes}}</h3>
+            <p>Clientes cadastrados</p>
+          </div>
+          <div class="icon">
+            <i class="pi pi-shopping-bag"></i>
+          </div>
+          <a routerLink="/clientes" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-3 col-6">
+
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>{{estatistica.receberMes | currency: 'BRL'}}</h3>
             <p>A Receber este mês</p>
           </div>
           <div class="icon">
@@ -79,129 +136,51 @@
 
     <div class="row">
       <div class="col-md-12">
+        <h2>Gráfico Anual</h2>
         <div class="card">
-          <div class="card-header">
-            <h5 class="card-title">Relatório Anual</h5>
-            <div class="card-tools">
-              <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
-              </button>
-              <div class="btn-group">
-                <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                  <i class="fas fa-wrench"></i>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right" role="menu">
-                  <a href="#" class="dropdown-item">Action</a>
-                  <a href="#" class="dropdown-item">Another action</a>
-                  <a href="#" class="dropdown-item">Something else here</a>
-                  <a class="dropdown-divider"></a>
-                  <a href="#" class="dropdown-item">Separated link</a>
-                </div>
-              </div>
-              <button type="button" class="btn btn-tool" data-card-widget="remove">
-                <i class="fas fa-times"></i>
-              </button>
-            </div>
-          </div>
-
           <div class="card-body">
             <div class="row">
               <div class="col-md-12" style="display: flex;">
-               
+
 
                 <!--IMAGEM DO GRAFICO-->
-                <div  style="width: 100%;">
+                <div style="width: 100%;">
                   <p class="text-center">
                     <strong>Relatório Anual {{hoje | date: 'yyyy'}}</strong>
                   </p>
-                  <p-chart type="line" [data]="data" [options]="options"  ></p-chart>
+                  <p-chart type="line" [data]="data" [options]="options"></p-chart>
                 </div>
-
-                <!-- <div class="col-md-4" style="display: flex;  flex-direction: column;">
-                  <p class="text-center">
-                    <strong>Goal Completion</strong>
-                  </p>
-                  <div class="progress-group">
-                    Add Products to Cart
-                    <span class="float-right"><b>160</b>/200</span>
-                    <div class="progress progress-sm">
-                      <div class="progress-bar bg-primary" style="width: 80%"></div>
-                    </div>
-                  </div>
-
-                  <div class="progress-group">
-                    Complete Purchase
-                    <span class="float-right"><b>310</b>/400</span>
-                    <div class="progress progress-sm">
-                      <div class="progress-bar bg-danger" style="width: 75%"></div>
-                    </div>
-                  </div>
-
-                  <div class="progress-group">
-                    <span class="progress-text">Visit Premium Page</span>
-                    <span class="float-right"><b>480</b>/800</span>
-                    <div class="progress progress-sm">
-                      <div class="progress-bar bg-success" style="width: 60%"></div>
-                    </div>
-                  </div>
-
-                  <div class="progress-group">
-                    Send Inquiries
-                    <span class="float-right"><b>250</b>/500</span>
-                    <div class="progress progress-sm">
-                      <div class="progress-bar bg-warning" style="width: 50%"></div>
-                    </div>
-                  </div>
-
-                </div> -->
-
               </div>
 
             </div>
-
-            <!-- <div class="card-footer">
-              <div class="row">
-                <div class="col-sm-3 col-6">
-                  <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
-                    <h5 class="description-header">$35,210.43</h5>
-                    <span class="description-text">TOTAL REVENUE</span>
-                  </div>
-
-                </div>
-
-                <div class="col-sm-3 col-6">
-                  <div class="description-block border-right">
-                    <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
-                    <h5 class="description-header">$10,390.90</h5>
-                    <span class="description-text">TOTAL COST</span>
-                  </div>
-
-                </div>
-
-                <div class="col-sm-3 col-6">
-                  <div class="description-block border-right">
-                    <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
-                    <h5 class="description-header">$24,813.53</h5>
-                    <span class="description-text">TOTAL PROFIT</span>
-                  </div>
-
-                </div>
-
-                <div class="col-sm-3 col-6">
-                  <div class="description-block">
-                    <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
-                    <h5 class="description-header">1200</h5>
-                    <span class="description-text">GOAL COMPLETIONS</span>
-                  </div>
-
-                </div>
-              </div>
-
-            </div> -->
-
           </div>
 
         </div>
 
       </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+          <h2>Histórico de {{hoje | date: 'yyyy'}}</h2>
+          <div class="card m-2" style="padding-top: 10px;">
+              <p-table [value]="historico" [paginator]="true" [rows]="10" [showCurrentPageReport]="true">
+                  <ng-template pTemplate="header">
+                      <tr>
+                          <th>Mês</th>
+                          <th>Total Recebido</th>
+                          <th>Total Saída</th>
+                          <th>Saldo</th>
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-h>
+                      <tr>
+                          <td>{{ getMesExtenso(h.mes) }}</td>
+                          <td>{{ h.totalRecebido | currency: 'BRL' }}</td>
+                          <td>{{ h.totalSaida | currency: 'BRL' }}</td>
+                          <td>{{ h.saldo | currency: 'BRL' }}</td> 
+                      </tr>
+                  </ng-template>
+              </p-table>
+          </div> 
+      </div>
+  </div>
