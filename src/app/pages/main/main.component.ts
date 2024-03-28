@@ -19,7 +19,7 @@ export class MainComponent extends AbstractForm implements OnInit {
     options: any;
     hoje: Date;
     mes: string;
-    estatistica: EstatisticaDTO;
+    estatistica: EstatisticaDTO = new EstatisticaDTO();
     historico: EstatisticaDTO[] = [];
     constructor(private estatisticaService: EstatisticaService,
         private msg: MessageService) {
@@ -42,15 +42,16 @@ export class MainComponent extends AbstractForm implements OnInit {
         this.mes = this.hoje.toLocaleDateString('pt-BR', { month: 'long' });
         this.mes = this.mes.charAt(0).toUpperCase() + this.mes.slice(1);
 
-        let historico: EstatisticaDTO[] = [];
+        this.historico = [];
         this.estatisticaService.obterHistoricoEstatistica().subscribe(res => {
-            historico = res;
+            this.historico = res;
+            console.log(res);
             this.estatisticaService.obterEstatistica().subscribe(estatistica => {
                 this.estatistica = estatistica;
                 this.estatistica.receberMes = this.getDefaultNumber(this.estatistica.receberMes);
                 this.estatistica.receberGeral = this.getDefaultNumber(this.estatistica.receberGeral);
-                historico.push(estatistica);
-                this.preencherGrafico(historico);
+                this.historico.unshift(estatistica);
+                this.preencherGrafico(this.historico);
             });
         });
     }
@@ -60,12 +61,13 @@ export class MainComponent extends AbstractForm implements OnInit {
         const textColor = documentStyle.getPropertyValue('--text-color');
         const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
         const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-        debugger;
         let meses = [];
         let totalRecebido = [];
         let totalSaida = [];
         let saldo = [];
-        for (const h of historico) {
+        const historicoAsc = this.deepcopy(historico);
+        historicoAsc.reverse();
+        for (const h of historicoAsc) {
             meses.push(this.getMesExtenso(h.mes));
             totalRecebido.push(h.totalRecebido);
             totalSaida.push(h.totalSaida);
