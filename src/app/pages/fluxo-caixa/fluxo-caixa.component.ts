@@ -13,11 +13,12 @@ import { EstatisticaService } from 'src/app/service/estatistica.service';
 })
 export class FluxoCaixaComponent extends AbstractForm implements OnInit {
 
-  fluxoCaixa: FluxoCaixaDTO = new FluxoCaixaDTO();
+  fluxoCaixa: FluxoCaixaDTO[] = [];
   pesquisaDataIni: Date;
   pesquisaDataFim: Date;
   displayDespesa = false;
   despesa: Despesa = new Despesa();
+  vencido = false;
   constructor(private ms: MessageService,
     private estatisticaService: EstatisticaService) {
     super(ms);
@@ -26,17 +27,11 @@ export class FluxoCaixaComponent extends AbstractForm implements OnInit {
   ngOnInit(): void {
     this.estatisticaService.sistemaValido().subscribe(res => {
       if (res) {
-        this.inicializarSistema();
+        this.vencido = false;
       } else {
         this.notification.showSistemaVencido();
+        this.vencido = true;
       }
-    });
-  }
-
-  inicializarSistema() {
-    this.estatisticaService.obterFluxoCaixa(this.convertToDate('02/01/2024')).subscribe(res => {
-      
-      this.fluxoCaixa = res;
     });
   }
 
@@ -46,15 +41,15 @@ export class FluxoCaixaComponent extends AbstractForm implements OnInit {
     this.despesa.data = this.convertDateToString(new Date());
   }
 
-  salvarDespesa() { 
-    if(!this.despesa.valor || (this.despesa.valor && this.despesa.valor == 0)) {
+  salvarDespesa() {
+    if (!this.despesa.valor || (this.despesa.valor && this.despesa.valor == 0)) {
       this.notification.showAlerta("O campo valor é obrigatório");
-      return ;
+      return;
     }
 
-    if(!this.despesa.data) {
+    if (!this.despesa.data) {
       this.notification.showAlerta("O campo Data é obrigatório");
-      return ;
+      return;
     }
 
     this.despesa.data = this.convertToDate(this.despesa.data);
@@ -62,6 +57,34 @@ export class FluxoCaixaComponent extends AbstractForm implements OnInit {
     this.estatisticaService.salvarDespesa(this.despesa).subscribe(res => {
       this.notification.showSucesso("Dados Gravados com sucesso.");
       this.displayDespesa = false;
+    });
+  }
+
+  calcularFluxoCaixa() {
+    if(this.vencido) {
+      this.notification.showSistemaVencido();
+      return ;
+    }
+
+    if(!this.pesquisaDataIni || !this.pesquisaDataFim) {
+      this.notification.showAlerta("Data de Início e Fim da Pesquisa são obrigatórias.");
+      return ;
+    }
+
+    const dataIni = this.convertToDate(this.pesquisaDataIni);
+    const dataFim = this.convertToDate(this.pesquisaDataFim);
+
+    if(dataIni > dataFim) {
+      this.notification.showAlerta("A data de início não pode ser maior que a data fim");
+      return ;
+    }
+
+    //02/01/2024
+    this.estatisticaService.obterFluxoCaixa(dataIni, dataFim).subscribe(res => {
+      if(res.length === 0) {
+        this.notification.showAlerta('Nenhum registro encontrato para o período informado.');
+      }
+      this.fluxoCaixa = res;
     });
   }
 }

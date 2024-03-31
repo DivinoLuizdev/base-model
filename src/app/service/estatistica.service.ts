@@ -21,8 +21,8 @@ export class EstatisticaService {
     return this.http.get<EstatisticaDTO[]>(`${this.apiUrl}/api/estatistica/historico`);
   }
 
-  obterFluxoCaixa(diaRef: Date): Observable<FluxoCaixaDTO> {
-    return this.http.get<FluxoCaixaDTO>(`${this.apiUrl}/api/estatistica/fluxo-caixa/${diaRef}`);
+  obterFluxoCaixa(dataIni: Date, dataFim: Date): Observable<FluxoCaixaDTO[]> {
+    return this.http.get<FluxoCaixaDTO[]>(`${this.apiUrl}/api/estatistica/fluxo-caixa/${dataIni}/${dataFim}`);
   }
 
   sistemaValido(): Observable<boolean> {
