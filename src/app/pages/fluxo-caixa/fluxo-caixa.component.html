@@ -1,102 +1,104 @@
-<div class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-6">
-                <h1 class="m-0">Fluxo de Caixa</h1>
+<div class="full-height">
+    <div class="container mt-5">
+        <h1>Fluxo de Caixa</h1>
+        <br />
+        <h5>Selecionar período</h5>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="dataIni">Data Início:</label>
+                    <p-inputMask mask="99/99/9999" [(ngModel)]="pesquisaDataIni" placeholder="dd/mm/yyyy"
+                        [style]="{width: '100%'}" [ngModelOptions]="{standalone: true}"></p-inputMask>
+                </div>
             </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active">Fluxo de Caixa</li>
-                </ol>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="dataFim">Data Término:</label>
+                    <p-inputMask mask="99/99/9999" [(ngModel)]="pesquisaDataFim" placeholder="dd/mm/yyyy"
+                        [style]="{width: '100%'}" [ngModelOptions]="{standalone: true}"></p-inputMask>
+                </div>
+            </div>
+            <div class="col-md-1 form-group">
+                <label for="pesquisa">&nbsp;</label>
+                <button name="pesquisa" type="button" class="btn btn-primary form-control"
+                    style="height: calc(2.25rem + 14px);" severity="info"><i class="pi pi-search"></i></button>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="add">&nbsp;</label>
+                <button name="add" type="button" class="btn btn-primary form-control" (click)="showDialogDespesa()"
+                    style="height: calc(2.25rem + 14px);" severity="info"><i class="pi pi-plus"></i>&nbsp;Adicionar
+                    despesa</button>
             </div>
         </div>
+    </div>
+    <div class="container mt-5">
+        <p-table [value]="fluxoCaixa.itens" [paginator]="false" class="custom-table">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="titulo-tabela" style="width: 5%;">ID</th>
+                <th class="titulo-tabela" style="width: 30%;">Cliente</th>
+                <th class="titulo-tabela" style="width: 10%;">Empréstimo</th>
+                <th class="titulo-tabela" style="width: 10%;">Data</th>
+                <th class="titulo-tabela" style="width: 15%;">Juros</th>
+                <th class="titulo-tabela" style="width: 15%;">Capital</th>
+                <th class="titulo-tabela" style="width: 15%;">Saídas</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-ri="rowIndex">
+              <tr [ngClass]="{ 'odd-row': ri % 2 === 1, 'even-row': ri % 2 === 0 }">
+                <td *ngIf="item.id > 0">{{ item.id }}</td>
+                <td *ngIf="item.id === 0">#</td>
+                <td>{{ item.identificacao }}</td>
+                <td>{{ item.data | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ fluxoCaixa.dataRef | date: 'dd/MM/yyyy' }}</td>
+                <td style="color: cadetblue;">{{ item.pagoJuros | currency: 'BRL' }}</td>
+                <td style="color: cadetblue;">{{ item.pagoParcela | currency: 'BRL' }}</td>
+                <td style="color: red;">{{ item.valorDebito | currency: 'BRL' }}</td>
+              </tr>
+              <tr *ngIf="fluxoCaixa.itens.length - 1 == ri" style="font-weight: bold;">
+                <td colspan="4" style="text-align: right;">Total {{fluxoCaixa.dataRef | date: 'dd/MM/yyyy'}}</td>
+                <td style="color: cadetblue;">{{fluxoCaixa.totalJuros | currency: 'BRL'}}</td>
+                <td style="color: cadetblue;">{{fluxoCaixa.totalParcela | currency: 'BRL'}}</td>
+                <td style="color: red;">Emp.: {{fluxoCaixa.totalEmprestimos | currency: 'BRL'}} <br/>
+                    Desp: {{fluxoCaixa.totalDespesas | currency: 'BRL'}}</td>
+              </tr>
+            </ng-template>
+          </p-table>
     </div>
 </div>
 
-<!-- <section class="content">
-    <div class="container-fluid">
-        <h2>{{ mes }}/{{hoje | date: 'yyyy'}}</h2>
-        <div class="row">
-            <div class="col-lg-3 col-6">
-
-                <div class="small-box bg-success">
-                    <div class="inner">
-                        <h3>{{estatistica.totalRecebido | currency: 'BRL'}}</h3>
-                        <p>Total de Recebidos</p>
-                    </div>
-                    <div class="icon">
-                        <i class="pi pi-angle-double-up"></i>
-                    </div>
-                    <a routerLink="/emprestimos" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
-                </div>
+<p-dialog header="Cadastrar Despesa" [(visible)]="displayDespesa"
+    [modal]="true" [draggable]="false" [resizable]="false">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="valor">Valor:</label>
+                <input currencyMask name="valor" maxLength="13" #valor="ngModel" ngModel
+                    style="height: calc(2.25rem + 14px);" [(ngModel)]="despesa.valor" title="Valor Emprestado"
+                    class="form-control" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
             </div>
-
-            <div class="col-lg-3 col-6">
-
-                <div class="small-box bg-danger">
-                    <div class="inner">
-                        <h3>{{estatistica.totalSaida | currency: 'BRL'}}</h3>
-                        <p>Total de Saída</p>
-                    </div>
-                    <div class="icon">
-                        <i class="pi pi-angle-double-down"></i>
-                    </div>
-                    <a routerLink="/emprestimos" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
-                </div>
-            </div>
-            <div class="col-lg-3 col-6">
-
-                <div class="small-box bg-info">
-                    <div class="inner">
-                        <h3>{{estatistica.saldo | currency: 'BRL'}}</h3>
-                        <p>Saldo em Caixa</p>
-                    </div>
-                    <div class="icon">
-                        <i class="pi pi-dollar"></i>
-                    </div>
-                    <a routerLink="/emprestimos" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
-                </div>
-            </div>
-            <div class="col-lg-3 col-6">
-
-                <div class="small-box bg-warning">
-                    <div class="inner">
-                        <h3>{{estatistica.totalAReceber | currency: 'BRL'}}</h3>
-                        <p>Total a Receber</p>
-                    </div>
-                    <div class="icon">
-                        <i class="pi pi-clock"></i>
-                    </div>
-                    <a routerLink="/emprestimos" class="small-box-footer">Detalhar <i class="pi pi-arrow-right"></i></a>
-                </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="data">Data:</label>
+                <p-inputMask mask="99/99/9999" [(ngModel)]="despesa.data" placeholder="dd/mm/yyyy"
+                    [style]="{width: '100%'}" [ngModelOptions]="{standalone: true}"></p-inputMask>
             </div>
         </div>
     </div>
-</section>
-
-<div class="full-height">
-    <div class="container mt-5">
-        <h2>Histórico de {{hoje | date: 'yyyy'}}</h2>
-        <div class="card m-2" style="padding-top: 10px;">
-            <p-table [value]="historico" [paginator]="true" [rows]="10" [showCurrentPageReport]="true">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Mês</th>
-                        <th>Total Recebido</th>
-                        <th>Total Saída</th>
-                        <th>Saldo</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-h>
-                    <tr>
-                        <td>{{ getMesExtenso(h.mes) }}</td>
-                        <td>{{ h.totalRecebido | currency: 'BRL' }}</td>
-                        <td>{{ h.totalSaida | currency: 'BRL' }}</td>
-                        <td>{{ h.saldo | currency: 'BRL' }}</td> 
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div> 
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="descricao">Descrição</label>
+                <input type="text" id="descricao" name="descricao" class="form-control" #descricao="ngModel" ngModel
+                    [(ngModel)]="despesa.descricao" style="height: calc(2.25rem + 14px);">
+            </div>
+        </div>
     </div>
-</div> -->
+    <div class="row">
+        <div class="col-md-12" style="text-align: right;">
+            <button name="save" type="button" class="btn btn-primary form-control" (click)="salvarDespesa()"
+                    style="height: calc(2.25rem + 14px); width: 110px;" severity="info"><i class="pi pi-save"></i>&nbsp;Salvar</button>
+        </div>
+    </div>
+</p-dialog>

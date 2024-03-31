@@ -1,7 +1,7 @@
 export class Despesa {
     id: number;
     valor: number;
-    data: Date;
+    data: any;
     descricao: string;
 
     constructor() {

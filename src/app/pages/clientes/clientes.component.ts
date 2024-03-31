@@ -36,7 +36,6 @@ export class ClientesComponent extends AbstractForm implements OnInit {
   filtrarPorNome(filtro: string) {
     this.clienteService.listaClientes().subscribe(res => {
       if (res && res.length > 0) {
-        console.log(res, filtro);
         this.clientes = res.filter(cliente => cliente.nome.toLowerCase().includes(filtro.toLowerCase()));
       }
     }, error => {

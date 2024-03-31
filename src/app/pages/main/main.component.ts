@@ -45,12 +45,12 @@ export class MainComponent extends AbstractForm implements OnInit {
         this.historico = [];
         this.estatisticaService.obterHistoricoEstatistica().subscribe(res => {
             this.historico = res;
-            console.log(res);
             this.estatisticaService.obterEstatistica().subscribe(estatistica => {
                 this.estatistica = estatistica;
                 this.estatistica.receberMes = this.getDefaultNumber(this.estatistica.receberMes);
                 this.estatistica.receberGeral = this.getDefaultNumber(this.estatistica.receberGeral);
-                this.historico.unshift(estatistica);
+                this.historico.push(estatistica);
+                this.historico = this.historicoDesc();
                 this.preencherGrafico(this.historico);
             });
         });
@@ -133,5 +133,19 @@ export class MainComponent extends AbstractForm implements OnInit {
                 }
             }
         };
+    }
+
+
+    historicoDesc(): EstatisticaDTO[] {
+        return this.historico.sort((a, b) => {
+            return b.mes - a.mes;
+        });
+    }
+
+    historicoAsc(): EstatisticaDTO[] {
+        return this.historico.sort((a, b) => {
+            // Ordena por valor numérico direto
+            return a.mes - b.mes;
+        });
     }
 }

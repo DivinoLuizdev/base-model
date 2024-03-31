@@ -1,0 +1,22 @@
+.custom-table {
+    border-collapse: collapse; /* Ensures borders around cells */
+  }
+  
+  .custom-table th,
+  .custom-table td {
+    border: 1px solid #ddd; /* Sets border width and color */
+    padding: 5px; /* Adds padding for better readability */
+  }
+  
+  .odd-row {
+    background-color: #eee; /* Light background color for odd rows */
+  }
+  
+  .even-row {
+    background-color: #fff; /* White background color for even rows */
+  }
+  
+  .titulo-tabela {
+    background-color: gray;
+    color: black;
+  }

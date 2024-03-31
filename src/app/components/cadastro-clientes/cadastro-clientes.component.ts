@@ -157,7 +157,6 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       this.resetForm();
     }, error => {
       this.notification.showErro('Falha ao adicionar cliente. Entre em contato com o suporte para mais informações');
-      console.log(error);
     });
   }
 

@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EstatisticaDTO } from '../model/estatistica.dto';
+import { FluxoCaixaDTO } from '../model/fluxo-caixa.dto';
+import { Despesa } from '../model/despesa';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,15 @@ export class EstatisticaService {
     return this.http.get<EstatisticaDTO[]>(`${this.apiUrl}/api/estatistica/historico`);
   }
 
+  obterFluxoCaixa(diaRef: Date): Observable<FluxoCaixaDTO> {
+    return this.http.get<FluxoCaixaDTO>(`${this.apiUrl}/api/estatistica/fluxo-caixa/${diaRef}`);
+  }
+
   sistemaValido(): Observable<boolean> {
     return this.http.get<boolean>(`${this.apiUrl}/api/estatistica/validar-sistema`);
+  }
+
+  salvarDespesa(despesa: Despesa): Observable<any> {
+    return this.http.post<Despesa>(`${this.apiUrl}/api/despesa`, despesa);
   }
 }
