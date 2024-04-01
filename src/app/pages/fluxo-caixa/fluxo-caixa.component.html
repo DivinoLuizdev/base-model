@@ -31,6 +31,30 @@
             </div>
         </div>
     </div>
+    <div class="container mt-5" *ngIf="fluxoCaixa.length > 0">
+        <div class="row">
+            <div class="col-md-3">
+              <h4>
+                <strong>Total Juros: </strong><br /> {{ totalJuros | currency: 'BRL' }}
+              </h4>
+            </div>
+            <div class="col-md-3">
+              <h4>
+                <strong>Total Capital: </strong><br /> {{ totalCapital | currency: 'BRL' }}
+              </h4>
+            </div>
+            <div class="col-md-3">
+              <h4>
+                <strong>Total Empréstimos: </strong><br /> {{ totalEmprestimo | currency: 'BRL' }}
+              </h4>
+            </div>
+            <div class="col-md-3">
+              <h4>
+                <strong>Total Despesas: </strong><br /> {{ totalDespesas | currency: 'BRL' }}
+              </h4>
+            </div>
+          </div>
+    </div>
     <div class="container mt-5" *ngFor="let fluxo of fluxoCaixa">
         <h3>{{fluxo.dataRef | date: 'dd/MM/yyyy'}}</h3>
         <p-table [value]="fluxo.itens" [paginator]="false" class="custom-table">

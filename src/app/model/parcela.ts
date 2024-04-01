@@ -12,4 +12,5 @@ export class Parcela {
     statusParcela: string = 'A Vencer';
     idEmprestimo: number;
     isPagamentoJuros = false;
+    isPago: boolean;
 }

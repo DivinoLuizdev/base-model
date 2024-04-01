@@ -19,6 +19,11 @@ export class FluxoCaixaComponent extends AbstractForm implements OnInit {
   displayDespesa = false;
   despesa: Despesa = new Despesa();
   vencido = false;
+
+  totalJuros = 0;
+  totalCapital = 0;
+  totalEmprestimo = 0;
+  totalDespesas = 0;
   constructor(private ms: MessageService,
     private estatisticaService: EstatisticaService) {
     super(ms);
@@ -61,30 +66,45 @@ export class FluxoCaixaComponent extends AbstractForm implements OnInit {
   }
 
   calcularFluxoCaixa() {
-    if(this.vencido) {
+    if (this.vencido) {
       this.notification.showSistemaVencido();
-      return ;
+      return;
     }
 
-    if(!this.pesquisaDataIni || !this.pesquisaDataFim) {
+    if (!this.pesquisaDataIni || !this.pesquisaDataFim) {
       this.notification.showAlerta("Data de Início e Fim da Pesquisa são obrigatórias.");
-      return ;
+      return;
     }
 
     const dataIni = this.convertToDate(this.pesquisaDataIni);
     const dataFim = this.convertToDate(this.pesquisaDataFim);
 
-    if(dataIni > dataFim) {
+    if (dataIni > dataFim) {
       this.notification.showAlerta("A data de início não pode ser maior que a data fim");
-      return ;
+      return;
     }
 
     //02/01/2024
-    this.estatisticaService.obterFluxoCaixa(dataIni, dataFim).subscribe(res => {
-      if(res.length === 0) {
+    this.estatisticaService.obterFluxoCaixa(dataIni, dataFim).subscribe((res: FluxoCaixaDTO[]) => {
+      if (res.length === 0) {
         this.notification.showAlerta('Nenhum registro encontrato para o período informado.');
+      } else {
+        this.calcularTotalGeral(res);
       }
       this.fluxoCaixa = res;
     });
+  }
+
+  calcularTotalGeral(fluxosCaixa: FluxoCaixaDTO[]) {
+    this.totalJuros = 0;
+    this.totalCapital = 0;
+    this.totalEmprestimo = 0;
+    this.totalDespesas = 0;
+    for (const fluxo of fluxosCaixa) {
+      this.totalJuros += fluxo.totalJuros;
+      this.totalCapital += fluxo.totalParcela;
+      this.totalEmprestimo += fluxo.totalEmprestimos;
+      this.totalDespesas += fluxo.totalDespesas;
+    }
   }
 }

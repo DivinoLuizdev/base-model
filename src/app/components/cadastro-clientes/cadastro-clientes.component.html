@@ -266,8 +266,9 @@
         <div class="row">
           <div class="col-md-2">
             <div class="form-group">
-              <label for="valor">Valor:</label>
-              <input currencyMask name="valor" maxLength="13" #valor="ngModel" ngModel
+              <label for="valor" *ngIf="!emprestimo.id">Valor:</label>
+              <label for="valor" *ngIf="emprestimo.id">Saldo Devedor:</label>
+              <input currencyMask name="valor" maxLength="13" #valor="ngModel" ngModel [disabled]="emprestimo.id > 0"
                 style="height: calc(2.25rem + 14px);" [(ngModel)]="emprestimo.valor" title="Valor Emprestado"
                 class="form-control" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
             </div>
@@ -302,9 +303,12 @@
           <div class="col-md-2">
             <div class="form-group">
               <label for="calcular">&nbsp;</label>
-              <button name="calcular" type="button" class="btn btn-primary form-control"
-                style="height: calc(2.25rem + 14px);" [disabled]="emprestimo.id" severity="info"
+              <button name="calcular" type="button" class="btn btn-primary form-control" *ngIf="!emprestimo.id"
+                style="height: calc(2.25rem + 14px);" severity="info"
                 (click)="calcularParcelasEmprestimo()"><i class="pi pi-calculator"></i> Calcular</button>
+                <button name="calcular" type="button" class="btn btn-primary form-control" *ngIf="emprestimo.id"
+                style="height: calc(2.25rem + 14px);" severity="info"
+                (click)="reCalcularParcelasEmprestimo()"><i class="pi pi-calculator"></i> Recalcular</button>
             </div>
 
           </div>
@@ -363,7 +367,7 @@
 
                 </td>
                 <td style="width: 20%;">
-                  <div class="flex align-items-center justify-content-center gap-2">
+                  <div class="flex align-items-center justify-content-center gap-2" *ngIf="!p.isPago">
                     <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
                       (click)="onRowEditInit(p)" class="p-button-rounded p-button-text"></button>
                     <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
@@ -371,6 +375,8 @@
                     <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
                       (click)="onRowEditCancel(p, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
                   </div>
+                  <p-tag [value]="'Pago'" severity="success"
+                  *ngIf="p.isPago"></p-tag>
                 </td>
               </tr>
             </ng-template>

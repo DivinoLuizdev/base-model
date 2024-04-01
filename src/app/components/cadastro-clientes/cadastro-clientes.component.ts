@@ -151,13 +151,23 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   salvar() {
-    this.clienteService.criarCliente(this.cliente).subscribe(res => {
-      this.notification.showSucesso('Dados Gravados com sucesso');
-      this.saveEvent.emit(this.cliente);
-      this.resetForm();
-    }, error => {
-      this.notification.showErro('Falha ao adicionar cliente. Entre em contato com o suporte para mais informações');
-    });
+    let editing = false;
+    for(const e of this.cliente.emprestimos) {
+      if(e.isEditing) {
+        editing = true;
+      }
+    }
+    if(!editing) {
+      this.clienteService.criarCliente(this.cliente).subscribe(res => {
+        this.notification.showSucesso('Dados Gravados com sucesso');
+        this.saveEvent.emit(this.cliente);
+        this.resetForm();
+      }, error => {
+        this.notification.showErro('Falha ao adicionar cliente. Entre em contato com o suporte para mais informações');
+      });
+    } else {
+      
+    }
   }
 
   validarAoSalvar() {
@@ -201,6 +211,8 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     this.editingIndex = index;
     emprestimo.dataInicial = this.convertDateToString(emprestimo.dataInicial);
     this.emprestimo = emprestimo;
+    this.calcularAReceber(null);
+    this.emprestimo.valor = this.emprestimo.valorAReceber;
     this.displayEmprestimo = true;
   }
 
@@ -233,6 +245,43 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     this.emprestimo.valorTotal = valorTotal;
     this.emprestimo.dataFinal = dataTermino;
     this.emprestimo.dataInicial = this.emprestimo.dataInicial;
+  }
+
+  reCalcularParcelasEmprestimo() {
+    if (!this.validarNovoEmprestimo()) {
+      return;
+    }
+    let valorTotal = 0;
+    let saldoDevedor = this.emprestimo.valor;
+    let valorParcela = this.emprestimo.valor / this.emprestimo.numeroParcela;
+    let vencimentoAtual = this.convertToDate(this.emprestimo.dataInicial);
+    let dataTermino: Date = null;
+
+    this.emprestimo.parcelas = this.removerParcelasNaoPagas(this.emprestimo.parcelas);
+    for (let i = 1; i <= this.emprestimo.numeroParcela; i++) {
+      let parcela = new Parcela();
+      parcela.dataVencimento = this.deepcopy(vencimentoAtual);
+      parcela.valorParcela = valorParcela;
+      parcela.valorJuros = (saldoDevedor * 0.1);
+      parcela.numParcela = i;
+
+      vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1);
+      saldoDevedor = this.emprestimo.valor - (valorParcela * i)
+      valorTotal += parcela.valorParcela + parcela.valorJuros;
+
+      this.emprestimo.parcelas.push(parcela);
+      dataTermino = vencimentoAtual;
+    }
+  }
+
+  removerParcelasNaoPagas(parcelas: Parcela[]) { 
+    let novas = [];
+    for(const p of parcelas) {
+      if(p.isPago) {
+        novas.push(p);
+      }
+    }
+    return novas;
   }
 
   validarNovoEmprestimo(): boolean {
@@ -312,8 +361,12 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   adicionarEmprestimo() {
-    if (!this.validarParcelamento() || !this.validarNovoEmprestimo()) {
-      return;
+    if(this.emprestimo.id <= 0) {
+      if (!this.validarParcelamento() || !this.validarNovoEmprestimo()) {
+        return;
+      }
+    } else {
+      this.emprestimo.isEditing = true;
     }
 
     this.emprestimo.dataInicial = this.convertToDate(this.emprestimo.dataInicial);
