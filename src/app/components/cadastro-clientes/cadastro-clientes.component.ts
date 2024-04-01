@@ -152,12 +152,12 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
 
   salvar() {
     let editing = false;
-    for(const e of this.cliente.emprestimos) {
-      if(e.isEditing) {
+    for (const e of this.cliente.emprestimos) {
+      if (e.editing) {
         editing = true;
       }
     }
-    if(!editing) {
+    if (!editing) {
       this.clienteService.criarCliente(this.cliente).subscribe(res => {
         this.notification.showSucesso('Dados Gravados com sucesso');
         this.saveEvent.emit(this.cliente);
@@ -166,7 +166,13 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
         this.notification.showErro('Falha ao adicionar cliente. Entre em contato com o suporte para mais informações');
       });
     } else {
-      
+      this.clienteService.atualizarCliente(this.cliente.id, this.cliente).subscribe(res => {
+        this.notification.showSucesso('Dados Gravados com sucesso');
+        this.saveEvent.emit(this.cliente);
+        this.resetForm();
+      }, error => {
+        this.notification.showErro('Falha ao editar cliente. Entre em contato com o suporte para mais informações');
+      });
     }
   }
 
@@ -241,7 +247,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       this.emprestimo.parcelas.push(parcela);
       dataTermino = vencimentoAtual;
     }
-    
+
     this.emprestimo.valorTotal = valorTotal;
     this.emprestimo.dataFinal = dataTermino;
     this.emprestimo.dataInicial = this.emprestimo.dataInicial;
@@ -256,6 +262,12 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     let valorParcela = this.emprestimo.valor / this.emprestimo.numeroParcela;
     let vencimentoAtual = this.convertToDate(this.emprestimo.dataInicial);
     let dataTermino: Date = null;
+    let parcelaInicial = 1;
+    for (const item of this.emprestimo.parcelas) {
+      if (item.isPago) {
+        parcelaInicial = item.numParcela;
+      }
+    }
 
     this.emprestimo.parcelas = this.removerParcelasNaoPagas(this.emprestimo.parcelas);
     for (let i = 1; i <= this.emprestimo.numeroParcela; i++) {
@@ -263,7 +275,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       parcela.dataVencimento = this.deepcopy(vencimentoAtual);
       parcela.valorParcela = valorParcela;
       parcela.valorJuros = (saldoDevedor * 0.1);
-      parcela.numParcela = i;
+      parcela.numParcela = parcelaInicial + i;
 
       vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1);
       saldoDevedor = this.emprestimo.valor - (valorParcela * i)
@@ -274,10 +286,10 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     }
   }
 
-  removerParcelasNaoPagas(parcelas: Parcela[]) { 
+  removerParcelasNaoPagas(parcelas: Parcela[]) {
     let novas = [];
-    for(const p of parcelas) {
-      if(p.isPago) {
+    for (const p of parcelas) {
+      if (p.isPago) {
         novas.push(p);
       }
     }
@@ -361,12 +373,12 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   adicionarEmprestimo() {
-    if(this.emprestimo.id <= 0) {
+    if (this.emprestimo.id <= 0) {
       if (!this.validarParcelamento() || !this.validarNovoEmprestimo()) {
         return;
       }
     } else {
-      this.emprestimo.isEditing = true;
+      this.emprestimo.editing = true;
     }
 
     this.emprestimo.dataInicial = this.convertToDate(this.emprestimo.dataInicial);
@@ -469,7 +481,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     } else {
       let receber = p.valorJuros + p.valorParcela;
 
-      for(let pg of p.pagamentos) {
+      for (let pg of p.pagamentos) {
         receber -= pg.valorPago;
       }
       return receber;
@@ -484,17 +496,17 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   registrarPagamento() {
-    if(!this.pagamento.valorPago || (this.pagamento.valorPago && this.pagamento.valorPago === 0)) {
+    if (!this.pagamento.valorPago || (this.pagamento.valorPago && this.pagamento.valorPago === 0)) {
       this.notification.showAlerta('O campo Valor Pago é obrigatório');
-      return ;
+      return;
     }
     const areceber = this.calcularAReceber(this.parcelaPagamento);
-    if(this.pagamento.valorPago > areceber) {
+    if (this.pagamento.valorPago > areceber) {
       this.notification.showAlerta('O valor pago ultrapassa o valor a receber.');
-      return ;
+      return;
     }
-    
-    if(this.parcelaPagamento.valorJuros === this.pagamento.valorPago) {
+
+    if (this.parcelaPagamento.valorJuros === this.pagamento.valorPago) {
       this.processarPagamentoJuros(this.parcelaPagamento.numParcela);
     }
     if (!this.parcelaPagamento.pagamentos) {
@@ -514,9 +526,9 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     this.parcelaPagamento.dataVencimento = vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1);
     this.parcelaPagamento.isPagamentoJuros = true;
     this.parcelaPagamento.idEmprestimo = this.emprestimo.id;
-    for(let parcela of this.emprestimo.parcelas) {
-      if(parcela.numParcela > numParcela) {
-        vencimentoAtual =  this.convertToDate(parcela.dataVencimento);
+    for (let parcela of this.emprestimo.parcelas) {
+      if (parcela.numParcela > numParcela) {
+        vencimentoAtual = this.convertToDate(parcela.dataVencimento);
         parcela.dataVencimento = vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1);
       }
     }

@@ -19,7 +19,7 @@ export class Emprestimo {
 
     //transient
     valorAReceber: number;
-    isEditing = false;
+    editing = false;
 }
 
 export class EmprestimoDTO {
