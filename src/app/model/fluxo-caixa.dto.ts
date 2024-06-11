@@ -1,3 +1,5 @@
+import { Parcela } from "./parcela";
+
 export class FluxoCaixaDTO {
     dataRef: Date;
     totalParcela: number;
@@ -10,8 +12,11 @@ export class FluxoCaixaDTO {
 export class ItemFluxoCaixaDTO {
     id: number;
     identificacao: string;
-    data: Date;
+    dataEmprestimo: Date;
+    dataPagamento: Date;
+    dataVencimento: Date;
     pagoJuros: number;
     pagoParcela: number;
     valorDebito: number;
+    parcela: Parcela;
 }

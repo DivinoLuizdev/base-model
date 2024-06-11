@@ -84,7 +84,6 @@ export class FluxoCaixaComponent extends AbstractForm implements OnInit {
       return;
     }
 
-    //02/01/2024
     this.estatisticaService.obterFluxoCaixa(dataIni, dataFim).subscribe((res: FluxoCaixaDTO[]) => {
       if (res.length === 0) {
         this.notification.showAlerta('Nenhum registro encontrato para o período informado.');
