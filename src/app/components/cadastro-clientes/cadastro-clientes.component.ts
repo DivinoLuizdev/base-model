@@ -152,9 +152,13 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
 
   salvar() {
     let editing = false;
-    for (const e of this.cliente.emprestimos) {
-      if (e.editing) {
-        editing = true;
+    if(!this.cliente.id || this.cliente.id <= 0) {
+      editing = false; 
+    } else {
+      for (const e of this.cliente.emprestimos) {
+        if (e.editing) {
+          editing = true;
+        }
       }
     }
     if (!editing) {
