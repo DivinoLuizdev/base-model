@@ -72,9 +72,14 @@
             </ng-template>
             <ng-template pTemplate="body" let-item let-ri="rowIndex">
                 <tr [ngClass]="{ 'odd-row': ri % 2 === 1, 'even-row': ri % 2 === 0 }">
-                    <td *ngIf="item.id > 0">{{ item.id }}</td>
+                    <td *ngIf="item.id > 0">{{ item.id }}
+                    </td>
                     <td *ngIf="item.id === 0">#</td>
-                    <td>{{ item.identificacao }}</td>
+                    <td>
+                        <a href="javascript:void(0)" *ngIf="item.dataPagamento"
+                        (click)="showParcela(item)">{{ item.identificacao }}</a>
+                        <span *ngIf="!item.dataPagamento">{{ item.identificacao }}</span>
+                    </td>
                     <td>{{ item.dataEmprestimo | date: 'dd/MM/yyyy' : '' }}</td>
                     <td>{{ item.dataVencimento | date: 'dd/MM/yyyy' : '' }}</td>
                     <td>{{ item.dataPagamento | date: 'dd/MM/yyyy' : '' }}</td>
@@ -128,5 +133,44 @@
                 style="height: calc(2.25rem + 14px); width: 110px;" severity="info"><i
                     class="pi pi-save"></i>&nbsp;Salvar</button>
         </div>
+    </div>
+</p-dialog>
+
+<p-dialog header="Dados da parcela" [(visible)]="displayParcela" [modal]="true" [draggable]="false"
+    [resizable]="false">
+    <div class="row">
+        <div class="col-md-4">
+          <p>
+            <strong>Capital </strong><br /> {{selected.parcela.valorParcela | currency: 'BRL'}}
+          </p>
+        </div>
+        <div class="col-md-4">
+          <p>
+            <strong>Juros </strong><br /> {{selected.parcela.valorJuros | currency: 'BRL'}}
+          </p>
+        </div>
+        <div class="col-md-4">
+          <p>
+            <strong>Total </strong><br /> {{selected.parcela.valorParcela + selected.parcela.valorJuros |
+            currency: 'BRL'}}
+          </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <p>
+              <strong>Nº Parcela </strong><br /> {{selected.parcela.numParcela}}
+            </p>
+          </div>
+          <div class="col-md-4">
+            <p>
+              <strong>Vencimento </strong><br /> {{selected.dataVencimento | date: 'dd/MM/yyyy'}}
+            </p>
+          </div>
+          <div class="col-md-4">
+            <p>
+              <strong>Pagamento </strong><br /> {{selected.dataPagamento | date: 'dd/MM/yyyy'}}
+            </p>
+          </div>
     </div>
 </p-dialog>

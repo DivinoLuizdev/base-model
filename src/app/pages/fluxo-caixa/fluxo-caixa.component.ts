@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { AbstractForm } from 'src/app/model/abastract-form';
 import { Despesa } from 'src/app/model/despesa';
-import { EstatisticaDTO } from 'src/app/model/estatistica.dto';
-import { FluxoCaixaDTO } from 'src/app/model/fluxo-caixa.dto';
+import { FluxoCaixaDTO, ItemFluxoCaixaDTO } from 'src/app/model/fluxo-caixa.dto';
 import { EstatisticaService } from 'src/app/service/estatistica.service';
 
 @Component({
@@ -17,8 +16,10 @@ export class FluxoCaixaComponent extends AbstractForm implements OnInit {
   pesquisaDataIni: Date;
   pesquisaDataFim: Date;
   displayDespesa = false;
+  displayParcela = false
   despesa: Despesa = new Despesa();
   vencido = false;
+  selected: ItemFluxoCaixaDTO = new ItemFluxoCaixaDTO();
 
   totalJuros = 0;
   totalCapital = 0;
@@ -105,5 +106,10 @@ export class FluxoCaixaComponent extends AbstractForm implements OnInit {
       this.totalEmprestimo += fluxo.totalEmprestimos;
       this.totalDespesas += fluxo.totalDespesas;
     }
+  }
+
+  showParcela(item: ItemFluxoCaixaDTO) {
+    this.selected = item;
+    this.displayParcela = true;
   }
 }

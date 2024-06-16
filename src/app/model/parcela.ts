@@ -13,4 +13,5 @@ export class Parcela {
     idEmprestimo: number;
     isPagamentoJuros = false;
     isPago: boolean;
+    dtPgto: any;
 }

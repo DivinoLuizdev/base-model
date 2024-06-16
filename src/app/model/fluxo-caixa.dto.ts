@@ -18,5 +18,5 @@ export class ItemFluxoCaixaDTO {
     pagoJuros: number;
     pagoParcela: number;
     valorDebito: number;
-    parcela: Parcela;
+    parcela: Parcela = new Parcela();
 }
