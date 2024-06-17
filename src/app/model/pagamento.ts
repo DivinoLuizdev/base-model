@@ -1,6 +1,6 @@
 export class Pagamento {
     id: number;
-    dataPagamento: Date;
+    dataPagamento: any;
     valorPago: number;
 
 }

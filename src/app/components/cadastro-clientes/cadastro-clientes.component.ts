@@ -161,6 +161,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
         }
       }
     }
+    debugger
     if (!editing) {
       this.clienteService.criarCliente(this.cliente).subscribe(res => {
         this.notification.showSucesso('Dados Gravados com sucesso');
@@ -214,6 +215,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   novoEmprestimo() {
     this.editingIndex - 1;
     this.emprestimo = new Emprestimo();
+    this.emprestimo.dataEmprestimo = this.convertDateToString(this.deepcopy(this.emprestimo.dataEmprestimo));
     this.displayEmprestimo = true;
   }
 
@@ -230,10 +232,14 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     if (!this.validarNovoEmprestimo()) {
       return;
     }
+    debugger
+    let vencimentoAtual = this.convertToDate(this.deepcopy(this.emprestimo.dataEmprestimo));
+    vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1);
+
     let valorTotal = 0;
     let saldoDevedor = this.emprestimo.valor;
     let valorParcela = this.emprestimo.valor / this.emprestimo.numeroParcela;
-    let vencimentoAtual = this.convertToDate(this.emprestimo.dataInicial);
+    
     let dataTermino: Date = null;
 
     this.emprestimo.parcelas = [];
@@ -313,22 +319,22 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       this.notification.showErro("O campo 'Quantidade Parcelas' é obrigatório");
     }
 
-    if (!this.emprestimo.dataInicial) {
+    if (!this.emprestimo.dataEmprestimo) {
       valido = false;
-      this.notification.showErro("O campo 'Vencimento 1ª Parcela' é obrigatório");
+      this.notification.showErro("O campo 'Data Empréstimo' é obrigatório");
     }
 
-    if (!this.isValidDate(this.emprestimo.dataInicial)) {
+    if (!this.isValidDate(this.emprestimo.dataEmprestimo)) {
       valido = false;
-      this.notification.showErro("Informe uma data válida para o campo 'Vencimento 1ª Parcela");
+      this.notification.showErro("Informe uma data válida para o campo 'Data Empréstimo'");
     }
 
-    const hoje = new Date();
-    const data = this.convertToDate(this.emprestimo.dataInicial);
-    if (data <= hoje) {
-      valido = false;
-      this.notification.showErro("A data de vencimento da 1ª parcela deve ser maior ou igual a data de hoje");
-    }
+    // const hoje = new Date();
+    // const data = this.convertToDate(this.emprestimo.dataEmprestimo);
+    // if (data <= hoje) {
+    //   valido = false;
+    //   this.notification.showErro("A data de vencimento da 1ª parcela deve ser maior ou igual a data de hoje");
+    // }
 
     return valido;
   }
@@ -343,14 +349,14 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       return false;
     }
 
-    for (const p of this.emprestimo.parcelas) {
-      const hoje = new Date();
-      const data = this.convertToDate(p.dataVencimento);
-      if (data <= hoje) {
-        this.notification.showAlerta(`A data de vencimento da parcela de nº ${p.numParcela} não pode ser menor que a data de hoje.`);
-        return false;
-      }
-    }
+    // for (const p of this.emprestimo.parcelas) {
+    //   const hoje = new Date();
+    //   const data = this.convertToDate(p.dataVencimento);
+    //   if (data <= hoje) {
+    //     this.notification.showAlerta(`A data de vencimento da parcela de nº ${p.numParcela} não pode ser menor que a data de hoje.`);
+    //     return false;
+    //   }
+    // }
     return true;
   }
 
@@ -384,8 +390,10 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     } else {
       this.emprestimo.editing = true;
     }
-
-    this.emprestimo.dataInicial = this.convertToDate(this.emprestimo.dataInicial);
+    debugger;
+    this.emprestimo.dataEmprestimo = this.convertToDate(this.emprestimo.dataEmprestimo);
+    this.emprestimo.dataInicial = this.convertToDate(this.deepcopy(this.emprestimo.dataEmprestimo));
+    this.emprestimo.dataInicial.setMonth(this.emprestimo.dataInicial.getMonth() + 1);
     if (this.editingIndex === -1) {
       this.cliente.emprestimos.push({ ...this.emprestimo });
     } else {
@@ -494,12 +502,17 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
 
   showNovoPagamento(p: Parcela) {
     this.pagamento = new Pagamento();
-    this.pagamento.dataPagamento = new Date();
+    this.pagamento.dataPagamento = this.convertDateToString(new Date());
     this.parcelaPagamento = p;
     this.displayNovoPagamento = true;
   }
 
   registrarPagamento() {
+    if(!this.pagamento.dataPagamento) {
+      this.notification.showAlerta('O campo Data pagamento é obrigatório.');
+      return;
+    }
+    this.pagamento.dataPagamento = this.convertToDate(this.pagamento.dataPagamento)
     if (!this.pagamento.valorPago || (this.pagamento.valorPago && this.pagamento.valorPago === 0)) {
       this.notification.showAlerta('O campo Valor Pago é obrigatório');
       return;

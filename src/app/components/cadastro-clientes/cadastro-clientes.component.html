@@ -286,8 +286,8 @@
           </div>
           <div class="col-md-3">
             <div class="form-group">
-              <label for="dataVencimento">Vencimento 1ª Parcela:</label>
-              <p-inputMask mask="99/99/9999" [(ngModel)]="emprestimo.dataInicial" placeholder="dd/mm/yyyy"
+              <label for="dataVencimento">Data Empréstimo:</label>
+              <p-inputMask mask="99/99/9999" [(ngModel)]="emprestimo.dataEmprestimo" placeholder="dd/mm/yyyy"
                 [style]="{width: '100%'}" [ngModelOptions]="{standalone: true}"></p-inputMask>
             </div>
           </div>
@@ -304,11 +304,11 @@
             <div class="form-group">
               <label for="calcular">&nbsp;</label>
               <button name="calcular" type="button" class="btn btn-primary form-control" *ngIf="!emprestimo.id"
-                style="height: calc(2.25rem + 14px);" severity="info"
-                (click)="calcularParcelasEmprestimo()"><i class="pi pi-calculator"></i> Calcular</button>
-                <button name="calcular" type="button" class="btn btn-primary form-control" *ngIf="emprestimo.id"
-                style="height: calc(2.25rem + 14px);" severity="info"
-                (click)="reCalcularParcelasEmprestimo()"><i class="pi pi-calculator"></i> Recalcular</button>
+                style="height: calc(2.25rem + 14px);" severity="info" (click)="calcularParcelasEmprestimo()"><i
+                  class="pi pi-calculator"></i> Calcular</button>
+              <button name="calcular" type="button" class="btn btn-primary form-control" *ngIf="emprestimo.id"
+                style="height: calc(2.25rem + 14px);" severity="info" (click)="reCalcularParcelasEmprestimo()"><i
+                  class="pi pi-calculator"></i> Recalcular</button>
             </div>
 
           </div>
@@ -375,8 +375,7 @@
                     <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
                       (click)="onRowEditCancel(p, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
                   </div>
-                  <p-tag [value]="'Pago'" severity="success"
-                  *ngIf="p.isPago"></p-tag>
+                  <p-tag [value]="'Pago'" severity="success" *ngIf="p.isPago"></p-tag>
                 </td>
               </tr>
             </ng-template>
@@ -462,21 +461,34 @@
                 <div class="col-md-4">
                   <strong>Saldo Devedor: </strong><br />{{calcularAReceber(parcelaPagamento) | currency: 'BRL'}}
                 </div>
-                <div class="col-md-4" style="padding-top: 25px;">
+              </div>
+              <div class="row">
+                <div class="col-md-3" style="padding-top: 25px;">
                   <div class="form-group">
                     <label for="valorPago">Valor Pago:</label>
                     <input currencyMask name="valorPago" maxLength="13" #valorPago="ngModel" ngModel
                       [(ngModel)]="pagamento.valorPago" title="Valor Pago" class="form-control"
-                      [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" />
-                  </div> <br />
-                  <button style="margin: 2px;" type="button" class="btn btn-info" severity="success"
-                    (click)="displayNovoPagamento = false">Voltar</button>
-                  <button style="margin: 2px;" type="button" class="btn btn-success" severity="success"
-                    (click)="registrarPagamento()">Pagar</button>
+                      [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+                      style="height: 50px;" />
+                  </div>
                 </div>
-
+                <div class="col-md-4" style="padding-top: 25px;">
+                  <div class="form-group">
+                    <label for="dataVencimento">Data pagamento:</label>
+                    <p-inputMask mask="99/99/9999" [(ngModel)]="pagamento.dataPagamento" placeholder="dd/mm/yyyy"
+                      [style]="{width: '100%'}" [ngModelOptions]="{standalone: true}"></p-inputMask>
+                  </div>
+                </div>
               </div>
-
+            </div>
+            <br/><br/><br/>
+            <div class="row">
+              <div class="col-md-6"><button style="margin: 2px;" type="button" class="btn btn-info" severity="success"
+                (click)="displayNovoPagamento = false">Voltar</button></div>  
+              <div class="col-md-6">
+              <button style="margin: 2px;" type="button" class="btn btn-success" severity="success"
+                (click)="registrarPagamento()">Pagar</button>
+              </div>
             </div>
           </span>
           <span *ngIf="!displayNovoPagamento">

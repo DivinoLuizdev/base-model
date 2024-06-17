@@ -7,7 +7,7 @@ import { StatusEmprestimo } from "./status-emprestimo";
 export class Emprestimo {
     id: number;
     valor: number;
-    dataEmprestimo: Date = new Date();
+    dataEmprestimo: any = new Date();
     dataInicial: any;
     dataFinal: Date;
     valorTotal: number;
