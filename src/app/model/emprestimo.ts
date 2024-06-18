@@ -16,6 +16,7 @@ export class Emprestimo {
     dataPagamentos: Pagamento[] = [];
     valorJuros: number;
     status: StatusEmprestimo = StatusEmprestimo.PENDENTE;
+    observacao: string;
 
     //transient
     valorAReceber: number;
@@ -37,6 +38,9 @@ export class EmprestimoDTO {
         this.emprestimo = e;
         this.clienteEmprestimo = c;
         this.cliente = `${c.documento.cpf} - ${c.nome}`;
+        if(e.observacao) {
+            this.cliente += ` [${e.observacao}]`
+        }
         this.status = this.popularStatusPagamento();
         this.valorEmprestado = e.valor;
         this.valorPago = this.calcularValorPago();

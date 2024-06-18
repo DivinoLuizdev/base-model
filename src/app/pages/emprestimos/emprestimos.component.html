@@ -69,7 +69,7 @@
     </div>
 
 </div>
-<p-dialog header="Detalhes Crediário" [(visible)]="displayPagamento" [style]="{width: '60vw', minHeight: '40vw'}"
+<p-dialog header="Detalhes Crediário" [(visible)]="displayPagamento" [style]="{width: '80vw', minHeight: '40vw'}"
     [modal]="true" [draggable]="false" [resizable]="false">
     <div class="row">
       <fieldset name="Pagamento">
@@ -96,7 +96,7 @@
           </div>
         </div>
         <div class="row" style="padding-top: 20px;" *ngIf="emprestimo?.parcelas?.length > 0">
-            <p-table [value]="emprestimo?.parcelas" dataKey="numParcela" [tableStyle]="{ 'min-width': '60rem' }">
+            <p-table [value]="emprestimo?.parcelas" dataKey="numParcela" [tableStyle]="{ 'min-width': '50rem' }">
               <ng-template pTemplate="header">
                 <tr>
                   <th style="width: 2em;">*</th>
@@ -104,25 +104,25 @@
                   <th style="width: 15%;">Valor Parcela</th>
                   <th style="width: 15%;">Valor Juros</th>
                   <th style="width: 15%;">Total</th>
-                  <th style="width: 25%;">Vencimento</th>
-                  <th style="width: 20%;">Situação</th>
+                  <th style="width: 15%;">Vencimento</th>
+                  <th style="width: 15%;">Situação</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-p let-expanded="expanded">
                 <tr>
-                  <td><button type="button" pButton pRipple [pRowToggler]="p"
+                  <td style="width: 2em;"><button type="button" pButton pRipple [pRowToggler]="p"
                       class="p-button-text p-button-rounded p-button-plain"
                       [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button></td>
-                  <td>
+                  <td style="width: 2em;">
                     {{ p.numParcela }}
                   </td>
-                  <td style="width: 20%;">{{ p.valorParcela | currency: 'BRL' }}</td>
-                  <td style="width: 20%;">
+                  <td style="width: 15%;">{{ p.valorParcela | currency: 'BRL' }}</td>
+                  <td style="width: 15%;">
                     {{ p.valorJuros | currency: 'BRL' }}
                   </td>
-                  <td style="width: 10%;">{{ p.valorParcela + p.valorJuros | currency: 'BRL' }}</td>
-                  <td style="width: 30%;">{{ p.dataVencimento | date: 'dd/MM/yyyy'}}</td>
-                  <td style="width: 20%;">
+                  <td style="width: 15%;">{{ p.valorParcela + p.valorJuros | currency: 'BRL' }}</td>
+                  <td style="width: 15%;">{{ p.dataVencimento | date: 'dd/MM/yyyy'}}</td>
+                  <td style="width: 15%;">
                     <p-tag [value]="p.statusParcela" [severity]="getSeverity(p.statusParcela)"
                       *ngIf="p.statusParcela"></p-tag>
                   </td>
@@ -175,8 +175,11 @@
           </div>
           <div class="col-md-6" style="text-align: right;">
   
-            <button name="inadimplente" type="button" class="btn btn-danger" (click)="registrarInadimplente()"
+            <button name="inadimplente" type="button" class="btn btn-danger" (click)="registrarInadimplente(true)"
               severity="info" *ngIf="!cliente.inadimplente"><i class="pi pi-confirm"></i> Marcar como Inadimplente</button>
+
+              <button name="adimplente" type="button" class="btn btn-danger" (click)="registrarInadimplente(false)"
+              severity="info" *ngIf="cliente.inadimplente"><i class="pi pi-confirm"></i> Desmarcar Inadimplente</button>
           </div>
         </div>
       </ng-template>

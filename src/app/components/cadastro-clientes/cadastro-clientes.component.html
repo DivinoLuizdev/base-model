@@ -247,6 +247,9 @@
 
               <button *ngIf="somenteCrediario" style="margin: 2px;" type="button" class="btn btn-success"
                 severity="success" (click)="showDialogPagamento(e, ri)">Pagar</button>
+
+                <button *ngIf="somenteCrediario" style="margin: 2px;" type="button" class="btn btn-primary"
+                severity="success" (click)="showQuitarParcelamento(e, ri)">Quitar</button>
             </td>
           </tr>
         </ng-template>
@@ -259,7 +262,7 @@
       <button type="button" class="btn btn-primary" (click)="validarAoSalvar()" [disabled]="!form.valid">Salvar</button>
     </div>
   </div>
-  <p-dialog header="Lançamento de Crediário" [(visible)]="displayEmprestimo" [style]="{width: '60vw'}" [modal]="true"
+  <p-dialog header="Lançamento de Crediário" [(visible)]="displayEmprestimo" [style]="{width: '75vw'}" [modal]="true"
     [draggable]="false" [resizable]="false">
     <div class="row">
       <fieldset name="novoEmprestimo">
@@ -311,6 +314,15 @@
                   class="pi pi-calculator"></i> Recalcular</button>
             </div>
 
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <!-- <label for="obs">Observação:</label> -->
+              <input type="text" name="obs" id="obs" #obs="ngModel" ngModel class="form-control"
+                autocomplete="off" [(ngModel)]="emprestimo.observacao" placeholder="Digite aqui uma observação" title="Digite aqui uma observação">
+            </div>
           </div>
         </div>
         <div class="row" style="padding-top: 20px;" *ngIf="emprestimo.parcelas.length > 0">
@@ -570,5 +582,45 @@
     </div>
     </fieldset>
     </div>
+  </p-dialog>
+
+  <!--Quitar Crediário-->
+  <p-dialog header="Quitar Crediário" [(visible)]="displayQuitacao" [style]="{minWidth: '70vw', minHeight: '40vw'}"
+    [modal]="true" [draggable]="false" [resizable]="false">
+      <div class="row">
+        <div class="col-md-12">
+          <ul>
+            <li *ngFor="let str of parcelasQuitacao" innerHTML="{{str}}"></li>
+          </ul>
+        </div>
+        <div class="row">
+          <div class="col-md-3" style="padding-top: 25px;">
+            <div class="form-group">
+              <label for="valorPago">Valor Pago:</label>
+              <input currencyMask name="valorPago" maxLength="13" #valorPago="ngModel" ngModel
+                [(ngModel)]="pagamento.valorPago" title="Valor Pago" class="form-control"
+                [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+                style="height: 50px;" />
+            </div>
+          </div>
+          <div class="col-md-4" style="padding-top: 25px;">
+            <div class="form-group">
+              <label for="dataVencimento">Data pagamento:</label>
+              <p-inputMask mask="99/99/9999" [(ngModel)]="pagamento.dataPagamento" placeholder="dd/mm/yyyy"
+                [style]="{width: '100%'}" [ngModelOptions]="{standalone: true}"></p-inputMask>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br/><br/><br/>
+      <div class="row">
+        <div class="col-md-6"><button style="margin: 2px;" type="button" class="btn btn-info" severity="success"
+          (click)="displayQuitacao = false">Voltar</button></div>  
+        <div class="col-md-6">
+        <button style="margin: 2px;" type="button" class="btn btn-success" severity="success"
+          (click)="quitar()">Quitar</button>
+        </div>
+      </div>
+  
   </p-dialog>
 </form>

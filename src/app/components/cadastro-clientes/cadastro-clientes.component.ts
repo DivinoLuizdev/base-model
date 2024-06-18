@@ -29,6 +29,8 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   displayNovoPagamento = false;
   pagamento: Pagamento = new Pagamento();
   parcelaPagamento: Parcela;
+  displayQuitacao = false;
+  parcelasQuitacao: string[] = [];
 
   @Input() cliente: Cliente;
   @Input() somenteCrediario: boolean
@@ -550,5 +552,30 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       }
     }
     this.emprestimo.dataFinal = vencimentoAtual;
+  }
+
+  showQuitarParcelamento(e: Emprestimo, index: number) {
+    let parcelaAtual = false;
+    let total = 0;
+    this.parcelasQuitacao = [];
+
+    for(let p of e.parcelas) {
+      if(!p.isPago && !parcelaAtual) {
+        total += p.valorParcela + p.valorJuros;
+        this.parcelasQuitacao.push(`<strong>Parcela: ${p.numParcela}</strong> - R$ ${p.valorParcela} + R$ ${p.valorJuros} (Juros)`);
+        parcelaAtual = true;
+        continue;
+      }
+      else if(!p.isPago) {
+        total += p.valorParcela;
+        this.parcelasQuitacao.push(`<strong>Parcela: ${p.numParcela}</strong> - R$ ${p.valorParcela}`);
+      }
+    }
+    this.parcelasQuitacao.push(`<strong>Total: R$ ${total}</strong>`)
+    this.displayQuitacao = true;
+  }
+
+  quitar() {
+
   }
 }

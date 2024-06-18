@@ -213,11 +213,11 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
     this.emprestimos = lista;
   }
 
-  registrarInadimplente() {
-    this.cliente.inadimplente = true;
+  registrarInadimplente(inadimplente: boolean) {
+    this.cliente.inadimplente = inadimplente;
     this.clienteService.criarCliente(this.cliente).subscribe(res => {
       this.listarEmprestimos();
-      this.notification.showSucesso('Cliente Marcado como Inadimplente');
+      this.notification.showSucesso('Dados gravados com sucesso.');
       this.displayPagamento = false;
     });
   }
