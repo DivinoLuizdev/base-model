@@ -233,7 +233,10 @@
         </ng-template>
         <ng-template pTemplate="body" let-e let-ri="rowIndex">
           <tr>
-            <td>{{ e.valor | currency: 'BRL' }}</td>
+            <td>
+              {{ e.valor | currency: 'BRL' }}
+              <small *ngIf="e.observacao"><br/>{{e.observacao}}</small>
+            </td>
             <td>{{ e.valorTotal | currency: 'BRL' }}</td>
             <td>{{ e.numeroParcela }}</td>
             <td>{{ obterDescricaoStatus(e.status) }}</td>
@@ -596,8 +599,8 @@
         <div class="row">
           <div class="col-md-3" style="padding-top: 25px;">
             <div class="form-group">
-              <label for="valorPago">Valor Pago:</label>
-              <input currencyMask name="valorPago" maxLength="13" #valorPago="ngModel" ngModel
+              <label for="valorPagoQuitar">Valor Pago:</label>
+              <input currencyMask name="valorPagoQuitar" maxLength="13" #valorPagoQuitar="ngModel" ngModel
                 [(ngModel)]="pagamento.valorPago" title="Valor Pago" class="form-control"
                 [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
                 style="height: 50px;" disabled/>

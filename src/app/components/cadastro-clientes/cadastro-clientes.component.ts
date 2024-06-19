@@ -538,6 +538,9 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     this.clienteService.registrarPagamento(this.parcelaPagamento).subscribe(res => {
       this.displayNovoPagamento = false;
       this.notification.showSucesso('Pagamento registrado com sucesso.');
+      setTimeout(function(){
+        location.reload();
+    }, 1000); 
     });
 
   }
