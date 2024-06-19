@@ -248,7 +248,7 @@
               <button *ngIf="somenteCrediario" style="margin: 2px;" type="button" class="btn btn-success"
                 severity="success" (click)="showDialogPagamento(e, ri)">Pagar</button>
 
-                <button *ngIf="somenteCrediario" style="margin: 2px;" type="button" class="btn btn-primary"
+                <button *ngIf="somenteCrediario && !emprestimoPago(e)" style="margin: 2px;" type="button" class="btn btn-primary"
                 severity="success" (click)="showQuitarParcelamento(e, ri)">Quitar</button>
             </td>
           </tr>
@@ -600,7 +600,7 @@
               <input currencyMask name="valorPago" maxLength="13" #valorPago="ngModel" ngModel
                 [(ngModel)]="pagamento.valorPago" title="Valor Pago" class="form-control"
                 [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
-                style="height: 50px;" />
+                style="height: 50px;" disabled/>
             </div>
           </div>
           <div class="col-md-4" style="padding-top: 25px;">

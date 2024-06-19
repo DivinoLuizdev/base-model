@@ -31,6 +31,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   parcelaPagamento: Parcela;
   displayQuitacao = false;
   parcelasQuitacao: string[] = [];
+  emprestimoQuitacao: Emprestimo = new Emprestimo();
 
   @Input() cliente: Cliente;
   @Input() somenteCrediario: boolean
@@ -163,7 +164,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
         }
       }
     }
-    debugger
+
     if (!editing) {
       this.clienteService.criarCliente(this.cliente).subscribe(res => {
         this.notification.showSucesso('Dados Gravados com sucesso');
@@ -555,6 +556,10 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   showQuitarParcelamento(e: Emprestimo, index: number) {
+    if(this.emprestimoPago(e)) {
+      this.notification.showAlerta('Este crediário já está quitado.');
+      return false;
+    }
     let parcelaAtual = false;
     let total = 0;
     this.parcelasQuitacao = [];
@@ -571,11 +576,75 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
         this.parcelasQuitacao.push(`<strong>Parcela: ${p.numParcela}</strong> - R$ ${p.valorParcela}`);
       }
     }
-    this.parcelasQuitacao.push(`<strong>Total: R$ ${total}</strong>`)
+    this.parcelasQuitacao.push(`<strong>Total a ser pago: R$ ${total}</strong>`)
     this.displayQuitacao = true;
+    this.emprestimoQuitacao = e;
+    this.pagamento = new Pagamento();
+    this.pagamento.valorPago = total;
+    return total;
+  }
+
+  emprestimoPago(e: Emprestimo) {
+    for(let p of e.parcelas) {
+      if(!p.isPago) {
+        return false;
+      }
+    }
+    return true;
   }
 
   quitar() {
+    let parcelaAtual = false;
+    let capital  = 0;
+    let juros = 0;
+    let numParcela = 1;
+
+    for(let p of this.emprestimoQuitacao.parcelas) {
+      if(!p.isPago && !parcelaAtual) {
+        capital = p.valorParcela;
+        juros = p.valorJuros;
+        parcelaAtual = true;
+        numParcela = p.numParcela;
+        continue;
+      }
+      else if(!p.isPago) {
+        capital += p.valorParcela;
+      }
+    }
+    
+    if(this.pagamento.valorPago != capital + juros) {
+      this.notification.showAlerta('Valor pagamento não pode ser menor que o saldo devedor.');
+      return ;
+    }
+    if(!this.pagamento.dataPagamento) {
+      this.notification.showAlerta('O campo Data pagamento é obrigatório.');
+      return ;
+    }
+
+    let parcela = new Parcela();
+    parcela.id = 0;
+    parcela.numParcela = numParcela;
+    parcela.valorParcela = capital;
+    parcela.valorJuros = juros;
+    parcela.dataVencimento = this.convertToDate(this.pagamento.dataPagamento);
+    parcela.pagamentos = [];
+
+    let pagamento = new Pagamento();
+    pagamento.id = 0;
+    pagamento.dataPagamento = this.convertToDate(this.pagamento.dataPagamento);
+    pagamento.valorPago = parcela.valorParcela + parcela.valorJuros;
+    parcela.pagamentos.push(pagamento);
+ 
+    this.emprestimoQuitacao.parcelas = [];
+    this.emprestimoQuitacao.parcelas.push(parcela);
+
+    this.clienteService.quitarFinanciamnento(this.emprestimoQuitacao).subscribe(res => {
+      this.notification.showSucesso('Crediário quitado com sucesso');
+      
+      setTimeout(function(){
+        location.reload();
+    }, 1000); 
+    });
 
   }
 }
