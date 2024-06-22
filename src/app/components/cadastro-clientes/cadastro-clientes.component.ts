@@ -224,7 +224,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
 
   editarEmprestimo(emprestimo: Emprestimo, index: number) {
     this.editingIndex = index;
-    emprestimo.dataInicial = this.convertDateToString(emprestimo.dataInicial);
+    emprestimo.dataEmprestimo = this.convertDateToString(emprestimo.dataInicial);
     this.emprestimo = emprestimo;
     this.calcularAReceber(null);
     this.emprestimo.valor = this.emprestimo.valorAReceber;
@@ -526,7 +526,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       return;
     }
 
-    if (this.parcelaPagamento.valorJuros === this.pagamento.valorPago) {
+    if (this.verificarPagamentoJuros()) {
       this.processarPagamentoJuros(this.parcelaPagamento.numParcela);
     }
     if (!this.parcelaPagamento.pagamentos) {
@@ -535,24 +535,40 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     this.parcelaPagamento.pagamentos.push(this.pagamento);
     this.calcularAReceber(null);
     this.popularStatusPagamento(this.parcelaPagamento);
+    this.parcelaPagamento.isPagamentoJuros = this.verificarPagamentoJuros();
     this.clienteService.registrarPagamento(this.parcelaPagamento).subscribe(res => {
       this.displayNovoPagamento = false;
       this.notification.showSucesso('Pagamento registrado com sucesso.');
       setTimeout(function(){
         location.reload();
-    }, 1000); 
+    }, 500); 
     });
-
   }
+
+  verificarPagamentoJuros() {
+    if(this.parcelaPagamento.valorParcela === this.parcelaPagamento.valorJuros
+        && this.pagamento.valorPago === this.parcelaPagamento.valorJuros && this.parcelaPagamento.pagamentos) {
+          for(const pg of this.parcelaPagamento.pagamentos) {
+            //Caso a parcela tenha alguma pagamento salvo no banco significa que já pagou o juros então
+            //o pagamento agora é de capital.
+            if(pg.id) {
+              return false;
+            }
+          }
+    }
+
+    return this.pagamento.valorPago === this.parcelaPagamento.valorJuros;
+  }
+
   processarPagamentoJuros(numParcela: number) {
     let vencimentoAtual = this.convertToDate(this.parcelaPagamento.dataVencimento);
-    this.parcelaPagamento.dataVencimento = vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1);
+    this.parcelaPagamento.dataVencimento = this.convertNumberToData(vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1));
     this.parcelaPagamento.isPagamentoJuros = true;
     this.parcelaPagamento.idEmprestimo = this.emprestimo.id;
     for (let parcela of this.emprestimo.parcelas) {
       if (parcela.numParcela > numParcela) {
         vencimentoAtual = this.convertToDate(parcela.dataVencimento);
-        parcela.dataVencimento = vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1);
+        parcela.dataVencimento = this.convertNumberToData(vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1));
       }
     }
     this.emprestimo.dataFinal = vencimentoAtual;

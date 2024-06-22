@@ -13,6 +13,10 @@ export abstract class AbstractForm {
         return input && input.invalid && (input.touched || form.submitted);
     }
 
+    convertNumberToData(valor: number): Date {
+        return new Date(valor);
+      }
+
     convertToDate(data: any): Date {
         if (data.toString().includes('-')) {
             return new Date(data.toString());
