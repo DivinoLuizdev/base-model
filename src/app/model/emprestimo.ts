@@ -25,7 +25,7 @@ export class Emprestimo {
 
 export class EmprestimoDTO {
     emprestimo: Emprestimo;
-    clienteEmprestimo: Cliente; 
+    clienteEmprestimo: Cliente;
     cliente: string;
     status: string;
     valorEmprestado: number;
@@ -38,14 +38,33 @@ export class EmprestimoDTO {
         this.emprestimo = e;
         this.clienteEmprestimo = c;
         this.cliente = `${c.documento.cpf} - ${c.nome}`;
-        if(e.observacao) {
+        if (e.observacao) {
             this.cliente += ` [${e.observacao}]`
         }
         this.status = this.popularStatusPagamento();
         this.valorEmprestado = e.valor;
         this.valorPago = this.calcularValorPago();
-        this.saldoDevedor = e.valorTotal - this.valorPago;
+        this.saldoDevedor = this.calcularSaldoDevedor();
         this.proximoPgto = this.popularProxPagamento();
+    }
+
+    private calcularSaldoDevedor(): number {
+        let saldo = this.emprestimo.valorTotal
+        for (const parcela of this.emprestimo.parcelas) {
+            let pagouJuros = false;
+            let pagouCapital = false;
+            for (const pg of parcela.pagamentos) {
+                if (pg.juros) {
+                    pagouJuros = true;
+                } else {
+                    pagouCapital = true;
+                }
+            }
+            if (pagouJuros && pagouCapital) {
+                saldo -= (parcela.valorJuros + parcela.valorParcela)
+            }
+        }
+        return saldo;
     }
 
     private popularStatusPagamento(): string {
@@ -53,26 +72,33 @@ export class EmprestimoDTO {
         let contPagos = 0;
         for (let p of this.emprestimo.parcelas) {
             if (p.pagamentos && p.pagamentos.length > 0) {
-                let somaPagamento = 0;
+                let pagouCapital = false;
+                let pagouJuros = false;
+
                 for (const pg of p.pagamentos) {
-                    somaPagamento += pg.valorPago;
+                    if (pg.juros) {
+                        pagouJuros = true;
+                    } else {
+                        pagouCapital = true;
+                    }
                 }
-                if (somaPagamento === p.valorJuros + p.valorParcela) {
+                if (pagouJuros && pagouCapital) {
                     status = 'Pago';
-                    contPagos+=1;
-                } else {
+                    contPagos += 1;
+                } else if (pagouJuros) {
                     status = 'Pago Parcial'
                 }
+
             } else if (AbstractForm.convertToDate(p.dataVencimento) < new Date()) {
                 return 'Em Atraso'
             } else {
                 status = 'A Vencer'
             }
         }
-        if(contPagos === this.emprestimo.parcelas.length) {
+        if (contPagos === this.emprestimo.parcelas.length) {
             status = 'Concluído';
         }
-        if(this.clienteEmprestimo.inadimplente) {
+        if (this.clienteEmprestimo.inadimplente) {
             status = `Inadimplente (${status})`;
         }
         return status;
@@ -80,8 +106,8 @@ export class EmprestimoDTO {
 
     private calcularValorPago(): number {
         let valor = 0;
-        for(let p of this.emprestimo.parcelas) {
-            for(let pg of p.pagamentos) {
+        for (let p of this.emprestimo.parcelas) {
+            for (let pg of p.pagamentos) {
                 valor += pg.valorPago;
             }
         }
@@ -91,13 +117,13 @@ export class EmprestimoDTO {
     private popularProxPagamento(): Date {
         let data: Date = null;
         const parcelas = this.emprestimo.parcelas.sort(this.compararDatasVencimento);
-        for(let p of this.emprestimo.parcelas) {
-            if(p.pagamentos && p.pagamentos.length > 0) {
+        for (let p of this.emprestimo.parcelas) {
+            if (p.pagamentos && p.pagamentos.length > 0) {
                 let valor = 0;
-                for(let pg of p.pagamentos) {
+                for (let pg of p.pagamentos) {
                     valor += pg.valorPago;
                 }
-                if(valor < p.valorJuros + p.valorParcela) {
+                if (valor < p.valorJuros + p.valorParcela) {
                     return p.dataVencimento;
                 } else {
                     continue;
@@ -112,14 +138,14 @@ export class EmprestimoDTO {
         // Converte as datas de vencimento para objetos Date
         const dataA = new Date(a.dataVencimento);
         const dataB = new Date(b.dataVencimento);
-      
+
         // Compara as datas
         if (dataA < dataB) {
-          return -1; // a vem antes de b
+            return -1; // a vem antes de b
         } else if (dataA > dataB) {
-          return 1; // b vem antes de a
+            return 1; // b vem antes de a
         } else {
-          return 0; // datas iguais
+            return 0; // datas iguais
         }
-      }
+    }
 }

@@ -155,8 +155,8 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
 
   salvar() {
     let editing = false;
-    if(!this.cliente.id || this.cliente.id <= 0) {
-      editing = false; 
+    if (!this.cliente.id || this.cliente.id <= 0) {
+      editing = false;
     } else {
       for (const e of this.cliente.emprestimos) {
         if (e.editing) {
@@ -242,7 +242,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     let valorTotal = 0;
     let saldoDevedor = this.emprestimo.valor;
     let valorParcela = this.emprestimo.valor / this.emprestimo.numeroParcela;
-    
+
     let dataTermino: Date = null;
 
     this.emprestimo.parcelas = [];
@@ -465,13 +465,19 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     let status = 'A Vencer';
 
     if (parcela.pagamentos && parcela.pagamentos.length > 0) {
-      let somaPagamento = 0;
+      let pagouCapital = false;
+      let pagouJuros = false;
+
       for (const pg of parcela.pagamentos) {
-        somaPagamento += pg.valorPago;
+        if(pg.juros) {
+          pagouJuros = true;
+        } else {
+          pagouCapital = true;
+        }
       }
-      if (somaPagamento === parcela.valorJuros + parcela.valorParcela) {
+      if (pagouJuros && pagouCapital) {
         status = 'Pago';
-      } else {
+      } else if(pagouJuros) {
         status = 'Pago Parcial'
       }
     } else if (this.convertToDate(parcela.dataVencimento) < new Date()) {
@@ -486,8 +492,17 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
 
       for (let p of this.emprestimo.parcelas) {
         if (p.pagamentos && p.pagamentos.length > 0) {
-          for (let pg of p.pagamentos) {
-            receber -= pg.valorPago;
+          let pagouJuros = false;
+          let pagouCapital = false;
+          for (const pg of p.pagamentos) {
+            if (pg.juros) {
+              pagouJuros = true;
+            } else {
+              pagouCapital = true;
+            }
+          }
+          if (pagouJuros && pagouCapital) {
+            receber -= (p.valorJuros + p.valorParcela)
           }
         }
       }
@@ -495,9 +510,17 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       return null;
     } else {
       let receber = p.valorJuros + p.valorParcela;
-
-      for (let pg of p.pagamentos) {
-        receber -= pg.valorPago;
+      let pagouJuros = false;
+      let pagouCapital = false;
+      for(const pg of p.pagamentos) {
+          if(pg.juros) {
+              pagouJuros = true;
+          } else {
+              pagouCapital = true;
+          }
+      }
+      if(pagouJuros && pagouCapital) {
+        receber -= (p.valorJuros + p.valorParcela)
       }
       return receber;
     }
@@ -511,7 +534,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   registrarPagamento() {
-    if(!this.pagamento.dataPagamento) {
+    if (!this.pagamento.dataPagamento) {
       this.notification.showAlerta('O campo Data pagamento é obrigatório.');
       return;
     }
@@ -527,34 +550,46 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     }
 
     if (this.verificarPagamentoJuros()) {
+      this.pagamento.juros = true;
       this.processarPagamentoJuros(this.parcelaPagamento.numParcela);
     }
     if (!this.parcelaPagamento.pagamentos) {
       this.parcelaPagamento.pagamentos = [];
     }
-    this.parcelaPagamento.pagamentos.push(this.pagamento);
+
+    //Pagou integral
+    if (this.parcelaPagamento.valorParcela + this.parcelaPagamento.valorJuros
+      === this.pagamento.valorPago) {
+      let pgJuros = new Pagamento();
+      pgJuros.dataPagamento = this.pagamento.dataPagamento;
+      pgJuros.valorPago = this.parcelaPagamento.valorJuros;
+      pgJuros.juros = true;
+      this.parcelaPagamento.pagamentos.push(pgJuros);
+
+      let pgCapital = new Pagamento();
+      pgCapital.dataPagamento = this.pagamento.dataPagamento;
+      pgCapital.juros = false;
+      pgCapital.valorPago = this.parcelaPagamento.valorParcela;
+      this.parcelaPagamento.pagamentos.push(pgCapital);
+    } else { //pagou parcial
+      this.parcelaPagamento.pagamentos.push(this.pagamento);
+    }
     this.calcularAReceber(null);
     this.popularStatusPagamento(this.parcelaPagamento);
     this.parcelaPagamento.isPagamentoJuros = this.verificarPagamentoJuros();
     this.clienteService.registrarPagamento(this.parcelaPagamento).subscribe(res => {
       this.displayNovoPagamento = false;
       this.notification.showSucesso('Pagamento registrado com sucesso.');
-      setTimeout(function(){
+      setTimeout(function () {
         location.reload();
-    }, 500); 
+      }, 500);
     });
   }
 
   verificarPagamentoJuros() {
-    if(this.parcelaPagamento.valorParcela === this.parcelaPagamento.valorJuros
-        && this.pagamento.valorPago === this.parcelaPagamento.valorJuros && this.parcelaPagamento.pagamentos) {
-          for(const pg of this.parcelaPagamento.pagamentos) {
-            //Caso a parcela tenha alguma pagamento salvo no banco significa que já pagou o juros então
-            //o pagamento agora é de capital.
-            if(pg.id) {
-              return false;
-            }
-          }
+    if (this.parcelaPagamento.valorParcela === this.parcelaPagamento.valorJuros
+      && this.pagamento.valorPago === this.parcelaPagamento.valorJuros && this.parcelaPagamento.pagamentos) {
+      return !(this.pagamento.valorPago === this.parcelaPagamento.valorJuros + this.parcelaPagamento.valorParcela);
     }
 
     return this.pagamento.valorPago === this.parcelaPagamento.valorJuros;
@@ -575,22 +610,22 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   showQuitarParcelamento(e: Emprestimo, index: number) {
-    if(this.emprestimoPago(e)) {
+    if (this.emprestimoPago(e)) {
       this.notification.showAlerta('Este crediário já está quitado.');
       return false;
     }
     let parcelaAtual = false;
     let total = 0;
     this.parcelasQuitacao = [];
-
-    for(let p of e.parcelas) {
-      if(!p.isPago && !parcelaAtual) {
+    debugger;
+    for (let p of e.parcelas) {
+      if (!Parcela.getIsPago(p) && !parcelaAtual) {
         total += p.valorParcela + p.valorJuros;
         this.parcelasQuitacao.push(`<strong>Parcela: ${p.numParcela}</strong> - R$ ${p.valorParcela} + R$ ${p.valorJuros} (Juros)`);
         parcelaAtual = true;
         continue;
       }
-      else if(!p.isPago) {
+      else if (!Parcela.getIsPago(p)) {
         total += p.valorParcela;
         this.parcelasQuitacao.push(`<strong>Parcela: ${p.numParcela}</strong> - R$ ${p.valorParcela}`);
       }
@@ -604,8 +639,8 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   emprestimoPago(e: Emprestimo) {
-    for(let p of e.parcelas) {
-      if(!p.isPago) {
+    for (let p of e.parcelas) {
+      if (!p.isPago) {
         return false;
       }
     }
@@ -614,30 +649,30 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
 
   quitar() {
     let parcelaAtual = false;
-    let capital  = 0;
+    let capital = 0;
     let juros = 0;
     let numParcela = 1;
 
-    for(let p of this.emprestimoQuitacao.parcelas) {
-      if(!p.isPago && !parcelaAtual) {
+    for (let p of this.emprestimoQuitacao.parcelas) {
+      if (!p.isPago && !parcelaAtual) {
         capital = p.valorParcela;
         juros = p.valorJuros;
         parcelaAtual = true;
         numParcela = p.numParcela;
         continue;
       }
-      else if(!p.isPago) {
+      else if (!p.isPago) {
         capital += p.valorParcela;
       }
     }
-    
-    if(this.pagamento.valorPago != capital + juros) {
+
+    if (this.pagamento.valorPago != capital + juros) {
       this.notification.showAlerta('Valor pagamento não pode ser menor que o saldo devedor.');
-      return ;
+      return;
     }
-    if(!this.pagamento.dataPagamento) {
+    if (!this.pagamento.dataPagamento) {
       this.notification.showAlerta('O campo Data pagamento é obrigatório.');
-      return ;
+      return;
     }
 
     let parcela = new Parcela();
@@ -653,16 +688,16 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     pagamento.dataPagamento = this.convertToDate(this.pagamento.dataPagamento);
     pagamento.valorPago = parcela.valorParcela + parcela.valorJuros;
     parcela.pagamentos.push(pagamento);
- 
+
     this.emprestimoQuitacao.parcelas = [];
     this.emprestimoQuitacao.parcelas.push(parcela);
 
     this.clienteService.quitarFinanciamnento(this.emprestimoQuitacao).subscribe(res => {
       this.notification.showSucesso('Crediário quitado com sucesso');
-      
-      setTimeout(function(){
+
+      setTimeout(function () {
         location.reload();
-    }, 1000); 
+      }, 1000);
     });
 
   }

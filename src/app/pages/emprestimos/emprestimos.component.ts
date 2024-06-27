@@ -89,20 +89,36 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
     if (!p) {
       let receber = this.emprestimo.valorTotal;
 
-      for (let p of this.emprestimo.parcelas) {
-        if (p.pagamentos && p.pagamentos.length > 0) {
-          for (let pg of p.pagamentos) {
-            receber -= pg.valorPago;
+      for (let parcela of this.emprestimo.parcelas) {
+          let pagouJuros = false;
+          let pagouCapital = false;
+          for(const pg of parcela.pagamentos) {
+              if(pg.juros) {
+                  pagouJuros = true;
+              } else {
+                  pagouCapital = true;
+              }
           }
-        }
+          if(pagouJuros && pagouCapital) {
+            receber -= (parcela.valorJuros + parcela.valorParcela)
+          }
       }
       this.emprestimo.valorAReceber = receber;
       return null;
     } else {
       let receber = p.valorJuros + p.valorParcela;
 
-      for (let pg of p.pagamentos) {
-        receber -= pg.valorPago;
+      let pagouJuros = false;
+      let pagouCapital = false;
+      for(const pg of p.pagamentos) {
+          if(pg.juros) {
+              pagouJuros = true;
+          } else {
+              pagouCapital = true;
+          }
+      }
+      if(pagouJuros && pagouCapital) {
+        receber -= (p.valorJuros + p.valorParcela)
       }
       return receber;
     }
@@ -139,15 +155,21 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
 
   popularStatusPagamento(parcela: Parcela) {
     let status = 'A Vencer';
-
+    debugger
     if (parcela.pagamentos && parcela.pagamentos.length > 0) {
-      let somaPagamento = 0;
+      let pagouCapital = false;
+      let pagouJuros = false;
+
       for (const pg of parcela.pagamentos) {
-        somaPagamento += pg.valorPago;
+        if(pg.juros) {
+          pagouJuros = true;
+        } else {
+          pagouCapital = true;
+        }
       }
-      if (somaPagamento === parcela.valorJuros + parcela.valorParcela) {
+      if (pagouJuros && pagouCapital) {
         status = 'Pago';
-      } else {
+      } else if(pagouJuros) {
         status = 'Pago Parcial'
       }
     } else if (this.convertToDate(parcela.dataVencimento) < new Date()) {
