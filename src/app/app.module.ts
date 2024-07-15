@@ -25,10 +25,10 @@ import { DialogModule } from 'primeng/dialog';
 import { CurrencyMaskModule } from "ng2-currency-mask";
 import { CalendarModule } from 'primeng/calendar';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
 import { FluxoCaixaComponent } from './pages/fluxo-caixa/fluxo-caixa.component';
-
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   declarations: [
@@ -43,7 +43,6 @@ import { FluxoCaixaComponent } from './pages/fluxo-caixa/fluxo-caixa.component';
     FluxoCaixaComponent,
   ],
   imports: [
-    
     ReactiveFormsModule,
     BrowserModule,
     AppRoutingModule,
@@ -62,11 +61,12 @@ import { FluxoCaixaComponent } from './pages/fluxo-caixa/fluxo-caixa.component';
     CurrencyMaskModule,
     CalendarModule,
     ToastModule,
-    TagModule
+    TagModule,
+    ConfirmDialogModule
   ],
   exports: [],
 
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService],
   
   bootstrap: [AppComponent]
 })

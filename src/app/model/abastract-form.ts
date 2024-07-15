@@ -15,7 +15,7 @@ export abstract class AbstractForm {
 
     convertNumberToData(valor: number): Date {
         return new Date(valor);
-      }
+    }
 
     convertToDate(data: any): Date {
         if (data.toString().includes('-')) {
@@ -110,5 +110,19 @@ export abstract class AbstractForm {
 
     getDefaultNumber(param: number) {
         return param ? param : 0;
+    }
+
+    cleanFormatCPF(cpf: string): string {
+        return cpf.trim().replace(/[.-]/g, '');
+    }
+
+    isNumber(value: string) {
+        return /^-?\d+(\.\d+)?$/.test(value);
+    }
+
+    isCpf(value: string) {
+        let cleaned = this.cleanFormatCPF(value);
+        return cleaned.length === 11
+            && this.isNumber(cleaned);
     }
 }

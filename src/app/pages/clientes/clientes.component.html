@@ -9,8 +9,8 @@
                 <form class="d-flex">
                     <input class="form-control me-2" type="text" placeholder="Pesquisar por Nome" aria-label="Pesquisar por Nome"
                     #filtroInput>
-                    <button class="btn btn-outline-success" type="button"> <i class="pi pi-search"
-                            style="font-size: 1rem" (click)="filtrarPorNome(filtroInput.value)"></i></button>
+                    <button class="btn btn-outline-success" type="button" (click)="filtrar(filtroInput.value)"> <i class="pi pi-search"
+                            style="font-size: 1rem"></i></button>
         
                 </form>
         
@@ -46,7 +46,7 @@
                     {{cliente.endereco.cidade}} - {{cliente.endereco.estado}}</td>
                 <td>{{ cliente.observacao }}</td>
                 <td >
-                    <button [disabled]="cliente.emprestimos.length > 0"  (click)="deletarCliente(cliente.id)" style="margin: 2px;" type="button" class="btn btn-danger"     
+                    <button [disabled]="cliente.emprestimos.length > 0"  (click)="excluirCliente(cliente.id)" style="margin: 2px;" type="button" class="btn btn-danger"     
                      title="Excluir Cliente"><i class="pi pi-trash"></i></button>
                 
                
@@ -62,7 +62,7 @@
         </ng-template>
     </p-table>
 </div> 
-
+<p-confirmDialog [style]="{width: '50vw'}" rejectLabel="Não" acceptLabel="Sim"></p-confirmDialog>
 <p-dialog [header]="tituloPopup" [(visible)]="displayCadastro" [style]="{width: '80vw'}"  [modal]="true"
 [draggable]="false" [resizable]="false">
   <app-cadastro-clientes 

@@ -155,7 +155,6 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
 
   popularStatusPagamento(parcela: Parcela) {
     let status = 'A Vencer';
-    debugger
     if (parcela.pagamentos && parcela.pagamentos.length > 0) {
       let pagouCapital = false;
       let pagouJuros = false;
@@ -167,7 +166,7 @@ export class EmprestimosComponent extends AbstractForm implements OnInit {
           pagouCapital = true;
         }
       }
-      if (pagouJuros && pagouCapital) {
+      if ((pagouJuros && pagouCapital) || (pagouJuros && parcela.valorParcela == 0)) {
         status = 'Pago';
       } else if(pagouJuros) {
         status = 'Pago Parcial'

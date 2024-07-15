@@ -82,7 +82,7 @@ export class EmprestimoDTO {
                         pagouCapital = true;
                     }
                 }
-                if (pagouJuros && pagouCapital) {
+                if ((pagouJuros && pagouCapital) || (pagouJuros && p.valorParcela == 0)) {
                     status = 'Pago';
                     contPagos += 1;
                 } else if (pagouJuros) {

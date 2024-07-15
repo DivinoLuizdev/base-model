@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { AbstractForm } from 'src/app/model/abastract-form';
 import { Cliente } from 'src/app/model/cliente';
 import { ClienteService } from 'src/app/service/cliente.service';
@@ -19,7 +19,8 @@ export class ClientesComponent extends AbstractForm implements OnInit {
 
   constructor(private clienteService: ClienteService,
     private ms: MessageService,
-    private estatisticaService: EstatisticaService) {
+    private estatisticaService: EstatisticaService,
+    private confirmService: ConfirmationService) {
     super(ms);
   }
 
@@ -33,15 +34,36 @@ export class ClientesComponent extends AbstractForm implements OnInit {
     });
   }
 
-  filtrarPorNome(filtro: string) {
-    console.log(filtro);
+  filtrar(filtro: string) {
     this.clienteService.listaClientes().subscribe(res => {
       if (res && res.length > 0) {
-        this.clientes = res.filter(cliente => cliente.nome.toLowerCase().includes(filtro.toLowerCase()));
+        if (this.isCpf(filtro)) {
+          this.filtrarPorCpf(filtro.trim(), res);
+          return;
+        }
+
+        if (this.isNumber(filtro)) {
+          this.filtrarPorId(filtro, res);
+          return;
+        }
+        this.filtrarPorNome(filtro, res);
       }
     }, error => {
       this.notification.showErro('Erro ao carregar lista de clientes');
     });
+  }
+
+  filtrarPorCpf(filtro: string, lista: Cliente[]) {
+    this.clientes = lista.filter(cliente => cliente.documento.cpf === filtro);
+  }
+
+  filtrarPorId(filtro: string, lista: Cliente[]) {
+    const id = Number(filtro);
+    this.clientes = lista.filter(cliente => cliente.id === id);
+  }
+
+  filtrarPorNome(filtro: string, lista: Cliente[]) {
+    this.clientes = lista.filter(cliente => cliente.nome.toLowerCase().includes(filtro.toLowerCase()));
   }
 
   carregarClientes() {
@@ -52,8 +74,19 @@ export class ClientesComponent extends AbstractForm implements OnInit {
     });
   }
 
+  excluirCliente(id: number) {
+    this.confirmService.confirm({
+      message: 'Tem certeza que deseja excluir este registro?',
+      header: 'Confirmação de Exclusão',
+      icon: 'pi pi-info-circle',
+      accept: () => {
+        this.deletarCliente(id);
+      }
+    });
+  }
+
   async deletarCliente(id: number): Promise<void> {
-    try {
+  try {
       await this.clienteService.deletarCliente(id).toPromise();
       this.clientes = this.clientes.filter((cliente) => cliente.id !== id);
       this.notification.showSucesso('Cliente excluído com sucesso.');

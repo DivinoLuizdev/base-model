@@ -8,7 +8,7 @@ import { EstadoCivil } from '../../model/estado-civil';
 import { Emprestimo } from 'src/app/model/emprestimo';
 import { AbstractForm } from 'src/app/model/abastract-form';
 import { Parcela } from 'src/app/model/parcela';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { StatusEmprestimo } from 'src/app/model/status-emprestimo';
 import { Pagamento } from 'src/app/model/pagamento';
 
@@ -38,7 +38,8 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   @Output() saveEvent: EventEmitter<Cliente> = new EventEmitter()
   emprestimo: Emprestimo = new Emprestimo();
   constructor(private clienteService: ClienteService,
-    private messageService: MessageService) {
+    private messageService: MessageService,
+    private confirmService: ConfirmationService) {
     super(messageService);
 
   }
@@ -235,7 +236,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     if (!this.validarNovoEmprestimo()) {
       return;
     }
-    debugger
+
     let vencimentoAtual = this.convertToDate(this.deepcopy(this.emprestimo.dataEmprestimo));
     vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1);
 
@@ -378,6 +379,20 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     this.emprestimo.valorTotal += parcela.valorParcela + parcela.valorJuros;
 
     delete this.clonedParcelas[parcela.numParcela];
+    this.ajustarDatasEdicaoParcela(parcela);
+  }
+
+  ajustarDatasEdicaoParcela(parcela: Parcela) {
+    debugger
+    const numParcela = parcela.numParcela;
+    let vencimentoAtual = this.convertToDate(parcela.dataVencimento);
+    for (let p of this.emprestimo.parcelas) {
+      if (p.numParcela > numParcela) {
+        vencimentoAtual = this.convertToDate(p.dataVencimento);
+        p.dataVencimento = this.convertNumberToData(vencimentoAtual.setMonth(vencimentoAtual.getMonth() + 1));
+      }
+    }
+    this.emprestimo.dataFinal = vencimentoAtual;
   }
 
   onRowEditCancel(parcela: Parcela, index: number) {
@@ -393,7 +408,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     } else {
       this.emprestimo.editing = true;
     }
-    debugger;
+
     this.emprestimo.dataEmprestimo = this.convertToDate(this.emprestimo.dataEmprestimo);
     this.emprestimo.dataInicial = this.convertToDate(this.deepcopy(this.emprestimo.dataEmprestimo));
     this.emprestimo.dataInicial.setMonth(this.emprestimo.dataInicial.getMonth() + 1);
@@ -435,14 +450,27 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
   }
 
   excluirEmprestimo(emp: Emprestimo, index: number) {
-    if (emp.id > 0) {
-      this.clienteService.deletarEmprestimo(emp.id).subscribe(res => {
-        this.notification.showSucesso('Registro excluído com sucesso.');
-      });
-    } else {
-      this.notification.showSucesso('Registro excluído com sucesso.');
-    }
+    this.confirmService.confirm({
+      message: 'Tem certeza que deseja excluir este registro?',
+      header: 'Confirmação de Exclusão',
+      icon: 'pi pi-info-circle',
+      accept: () => {
+        if (emp.id > 0) {
+          this.clienteService.deletarEmprestimo(emp.id).subscribe(res => {
+            this.notification.showSucesso('Registro excluído com sucesso.');
+            this.removerEmprestimoDaLista(index);
+          }, error => {
+            this.notification.showErro('Não é possível excluir empréstimos que tenham pagamentos registrados.')
+          });
+        } else {
+          this.notification.showSucesso('Registro excluído com sucesso.');
+          this.removerEmprestimoDaLista(index);
+        }
+      }
+    });
+  }
 
+  removerEmprestimoDaLista(index: number) {
     if (index > -1 && index < this.cliente.emprestimos.length) {
       this.cliente.emprestimos.splice(index, 1);
     } else {
@@ -469,15 +497,15 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       let pagouJuros = false;
 
       for (const pg of parcela.pagamentos) {
-        if(pg.juros) {
+        if (pg.juros) {
           pagouJuros = true;
         } else {
           pagouCapital = true;
         }
       }
-      if (pagouJuros && pagouCapital) {
+      if ((pagouJuros && pagouCapital) || (pagouJuros && parcela.valorParcela == 0)) {
         status = 'Pago';
-      } else if(pagouJuros) {
+      } else if (pagouJuros) {
         status = 'Pago Parcial'
       }
     } else if (this.convertToDate(parcela.dataVencimento) < new Date()) {
@@ -512,14 +540,14 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
       let receber = p.valorJuros + p.valorParcela;
       let pagouJuros = false;
       let pagouCapital = false;
-      for(const pg of p.pagamentos) {
-          if(pg.juros) {
-              pagouJuros = true;
-          } else {
-              pagouCapital = true;
-          }
+      for (const pg of p.pagamentos) {
+        if (pg.juros) {
+          pagouJuros = true;
+        } else {
+          pagouCapital = true;
+        }
       }
-      if(pagouJuros && pagouCapital) {
+      if (pagouJuros && pagouCapital) {
         receber -= (p.valorJuros + p.valorParcela)
       }
       return receber;
@@ -580,9 +608,9 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     this.clienteService.registrarPagamento(this.parcelaPagamento).subscribe(res => {
       this.displayNovoPagamento = false;
       this.notification.showSucesso('Pagamento registrado com sucesso.');
-      setTimeout(function () {
-        location.reload();
-      }, 500);
+      // setTimeout(function () {
+      //   location.reload();
+      // }, 500);
     });
   }
 
@@ -617,7 +645,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
     let parcelaAtual = false;
     let total = 0;
     this.parcelasQuitacao = [];
-    debugger;
+
     for (let p of e.parcelas) {
       if (!Parcela.getIsPago(p) && !parcelaAtual) {
         total += p.valorParcela + p.valorJuros;
@@ -640,7 +668,7 @@ export class CadastroClientesComponent extends AbstractForm implements OnInit, O
 
   emprestimoPago(e: Emprestimo) {
     for (let p of e.parcelas) {
-      if (!p.isPago) {
+      if (!Parcela.getIsPago(p)) {
         return false;
       }
     }
